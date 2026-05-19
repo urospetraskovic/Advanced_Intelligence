@@ -1,0 +1,17 @@
+Teme
+Možete predložiti temu koja vas interesuje ili odabrati jednu od sledećih tema:
+
+AI in Software Engineering
+Automatska sumarizacija izvornog koda (code summarization, code comment generation)
+Automatska procena čitljivosti koda (source code readability)
+Automatska detekcija ranjivosti u kodu (vulnerability detection)
+Automatska detekcija defekata u kodu (software defect prediction)
+Detekcija nekvalitetno napisanog koda (code smell detection)
+AI in (Computing) Education
+Intelligent Tutoring Systems
+Deep Reinforcement Learning for Intelligent Tutoring systems
+Recommenders for Intelligent Tutoring Systems
+Detekcija emocija u tekstu
+Kako se rešava neki problem saradnjom čoveka i veštačke inteligencije https://issues.org/human-centered-ai/ (human-in-the-loop). Treba da specificirate konkretan problem i opišete kako bi se ostvarila sinergija čoveka i AI.
+AI Creativity and the Human-AI Co-creation Model
+Data-Centric AI pristup za rešavanje određenog problema https://https-deeplearning-ai.github.io/data-centric-comp/

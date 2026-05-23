@@ -1,8 +1,10 @@
 # Govor prezentacije — LLM-driven ITS pipeline
 
-> Speaker script za snimljenu prezentaciju (60–90 min) na predmetu **Napredne tehnike računarske inteligencije**, master FTN UNS.
+> Speaker script za snimljenu prezentaciju (75–105 min) na predmetu **Napredne tehnike računarske inteligencije**, master FTN UNS.
 > Tim: Uroš Petrašković, Luka Šarić, Stefan Lazarević.
-> Tempo: ~130 reči/min sa pauzama → ~10 000 reči = ~75 min.
+> Tempo: ~130 reči/min sa pauzama → ~13 500 reči = ~95 min.
+>
+> **Napomena o sekcijama (NEW)**: sekcije sa oznakom *(N — NOVI)* su dodate u kasnijoj iteraciji i odgovaraju novim slajdovima u prezentaciji. Stari brojevi (1)–(53) su zadržani da se referenca na ranije snimke ne pokvari; novi blokovi su 34a, 34b, 34c (Segment C, Uroš). Više detalja o automatskom validation stack-u — Haladyna lint, CoVe, Solvability, SOLO judge, IOC — su dodati u Uroš sekciji posle obrade Uros_izmisljanje materijala.
 
 Konvencije:
 - **(N)** = slajd broj u redosledu PPTX-a (counter koji koristi `build_presentation.py`).
@@ -34,9 +36,9 @@ Sva tri rada su komplementarna — adresiraju različite faze istog problema. Vr
 ## (3) Predmet i kontekst — Uroš (~1 min)
 
 **Uroš:**
-Predmet Napredne tehnike računarske inteligencije pokriva temu na preseku dve oblasti sa zvanične liste tema: *AI in Computing Education* i *Intelligent Tutoring Systems*. Format polaganja je snimljena prezentacija u trajanju od jednog do jednog i po sata, što nam daje prostor da uđemo dovoljno duboko u tehnička rešenja, ali i da tematski kontekstualizujemo zašto je problem koji rešavamo vredan rešavanja.
+Predmet Napredne tehnike računarske inteligencije pokriva temu na preseku dve oblasti sa zvanične liste tema: *AI in Computing Education* i *Intelligent Tutoring Systems*. 
 
-Predmet drže profesorka Simona Prokić i profesor Aleksandar Kovačević, a naša prezentacija će pokušati da im — i vama, ako ovo gleda neko drugi — pruži ne samo informaciju o tri konkretna projekta, nego i pedagoški okvir oko kojeg smo ih objedinili.
+Naša prezentacija će pokušati da pruži ne samo informaciju o tri konkretna projekta, nego i pedagoški okvir oko kojeg smo ih objedinili.
 
 `[prelaz]`
 
@@ -79,7 +81,7 @@ Segment nula. Uvod i motivacija. Pre nego što pričamo o LLM-ovima, ontologijam
 ## (6) Problem — Stefan (~3 min)
 
 **Stefan:**
-Kreiranje obrazovnih materijala je vremenski i kognitivno zahtevan posao. Postoji konkretan podatak iz OECD TALIS istraživanja iz 2018: prosečan nastavnik u OECD zemljama provede oko dvadeset procenata radnog vremena na pripremu materijala i administraciju — to je svaka peta radna ura. Studije iz Sjedinjenih Država idu još dalje — između sedam i dvanaest sati nedeljno samo na pripremu, izvan časa.
+Kreiranje obrazovnih materijala je vremenski i kognitivno zahtevan posao. Postoji konkretan podatak iz OECD TALIS istraživanja iz 2018: prosečan nastavnik u OECD zemljama provede oko dvadeset procenata radnog vremena na pripremu materijala i administraciju — znaci petina radnoog vremena. Studije iz Sjedinjenih Država idu još dalje — između sedam i dvanaest sati nedeljno samo na pripremu, izvan časa.
 
 `[pokaži tri brojke na ekranu]`
 
@@ -354,17 +356,21 @@ Ali — i to je važno reći — lokalni model je *slabiji* na nuansiranim zadac
 
 `[pauza]`
 
-Sad — *kako* generišem pitanja. Tu je središnja stvar — **PS4 prompt template.** Skraćeno od "*Persona, Pravila, Putanja, Pitanje*" — moj naziv, inspirisan praksom iz prompt engineering literature.
+Sad — *kako* generišem pitanja. Tu je središnja stvar — **PS4 prompt template.** Skraćeno od "*Persona, Pravila, Putanja, Pitanje*". I — da budem pošten — **PS4 nije moj naziv**. PS4 je *publikovan template* iz rada **Scaria i kolege, 2024**, *„Automated Educational Question Generation at Different Bloom's Skill Levels using Large Language Models"*. Autori su u svom radu testirali pet varijanti — od PS1 do PS5 — i **PS4 je nadmašio sve ostale** za zadatak generisanja pitanja. Mi smo preuzeli taj template i adaptirali ga za SOLO umesto Bloomovih nivoa.
 
 **Komponenta jedan — Persona.** Role priming. LLM-u se eksplicitno kaže: „ti si iskusan profesor, koji generiše pitanja za studente master nivoa, koja proveravaju određeni SOLO nivo." Nije ovo dekoracija. Promenjuje distribuciju izlaza merljivo.
 
-**Komponenta dva — Pravila.** Kratka definicija SOLO nivoa, plus jedan worked example. Bitno — worked example je iz **drugog domena**, ne iz domena lekcije. Konkretno, koristim fotosintezu kao primer. Razlog: ne želim da model uči *sadržaj*, želim da uči *strukturu*. Da mu dam primer iz operativnih sistema, mogao bi da iskopira primer umesto da generiše novo pitanje.
+**Komponenta dva — Pravila.** Kratka definicija SOLO nivoa, plus *jedan* worked example — ne pet. Scaria i kolege su konkretno pokazali da je PS5 — *pet primera po nivou* — *gore* od PS4. Razlog: previše primera „natera" model da kopira, a ne da generalizuje. Worked example pristup ima dublji koren — **Sweller i Cooper, 1985**, *„The use of worked examples as a substitute for problem solving"* — klasični rad iz teorije kognitivnog opterećenja koji je pokazao da jedan dobar primer ubrzava sticanje šeme više nego pet vežbi.
 
-**Komponenta tri — Putanja.** Chain-of-thought scaffold. LLM se ne traži da odmah napiše pitanje. Prvo se traži da identifikuje ključni koncept, pa da izvede SOLO nivo, pa tek onda da generiše pitanje. Tri koraka, eksplicitno.
+I — moj dodatak na osnovu iskustva — worked example je iz **drugog domena**, ne iz domena lekcije. Konkretno, koristim *fotosintezu* kao primer kad generišem pitanja iz operativnih sistema. Razlog: ne želim da model uči *sadržaj*, želim da uči *strukturu* pitanja. Da mu dam primer iz operativnih sistema, mogao bi da iskopira primer umesto da generiše novo pitanje. Ovo je oblik *structure mapping* — model uči formu, ne temu.
 
-**Komponenta četiri — Pitanje.** Strogi izlazni JSON schema sa poljima: question, correct_answer, distractors (lista), source_line, tags, level. Plus — *typed distractor strategies*. Za svaki SOLO nivo, postoji tabela tipova grešaka koje distraktori treba da reflektuju. Za Unistructural — leksička konfuzija, slično ime drugog koncepta. Za Multistructural — nepotpuna lista. Za Relational — pogrešna kauzalnost. Za Extended Abstract — preoptšta generalizacija.
+**Komponenta tri — Putanja.** Chain-of-thought scaffold — **Wei i kolege, 2022**, *„Chain-of-Thought Prompting Elicits Reasoning in Large Language Models."* LLM se ne traži da odmah napiše pitanje. Prvo se traži da *interno rezonuje* korak po korak: identifikuje ključni koncept iz teksta, izvede SOLO nivo, draftuje stem, napiše tačan odgovor, generiše distraktore, proveri pravila. Tek onda ide izlaz — i to *samo* JSON, bez reasoning-a u outputu. Trik koji daje znatno bolje rezultate na zadacima koji zahtevaju logiku.
 
-To je PS4. Čitljiv akronim, prilično standardna pedagoška ideja, ali — sklopljena u jedan prompt template.
+**Komponenta četiri — Pitanje.** Strogi izlazni JSON schema sa poljima: question, correct_answer, distractors, source_line, tags, level. Plus — *typed distractor strategies*. Za svaki SOLO nivo, postoji tabela tipova grešaka koje distraktori treba da reflektuju. Za Unistructural — leksička konfuzija, slično ime drugog koncepta. Za Multistructural — nepotpuna lista. Za Relational — pogrešna kauzalnost. Za Extended Abstract — preopšta generalizacija. Strategije su zasnovane na radu **Sadlera, 1998** — *„Psychometric Models of Student Conceptions in Science"* — koji je pokazao da su najbolji distraktori oni koji reflektuju *stvarne* studentske misskoncepcije, ne hipotetičke.
+
+Plus — i tu se Haladyna ubacuje — u prompt direktno ubacujem **11 numerisanih item-writing pravila** iz Haladyna, Downing i Rodriguez 2002. *„Stem se završava pitanjem"*, *„najduža opcija ne sme biti više od dva puta duža od najkraće"*, *„nikad ne koristi 'all/none of the above'"*, *„tačan odgovor ne sme biti najduži"* i tako dalje. Numerisana pravila su, po Haladynama, *najefektivniji* način da se ona poštuju — model ih čita kao constraints, ne kao tekst.
+
+To je PS4 kako ga mi koristimo. Naučno utemeljen — Scaria template, Wei CoT, Sweller worked examples, Sadler distraktori, Haladyna pravila — sve sklopljeno u jedan prompt.
 
 `[prelaz]`
 
@@ -385,11 +391,11 @@ Moje rešenje: **dva prolaza.**
 
 **Pass 2.** LLM dobija svoje vlastito izlazno pitanje iz prošlog prolaza, plus tabelu *typed distractor strategies*. Vraća: tri distraktora, svaki sa eksplicitnim tipom greške.
 
-To je *predictive prompting* — model prvo zamišlja gde će student da pogreši, pa tek onda piše distraktore koji testiraju te tipove grešaka.
+To je *predictive prompting* — model prvo zamišlja gde će student da pogreši, pa tek onda piše distraktore koji testiraju te tipove grešaka. Tehnika dolazi od **Bitew i kolega, 2023**, *„Distractor Generation for Multiple-Choice Questions with Predictive Prompting and Large Language Models"*. U svom radu su izmerili da **oko 53% generisanih distraktora bude označeno kao production-ready** od strane nastavnika — što je u to vreme **prevazilazilo prethodne SOTA pristupe.** Mi ga koristimo eksplicitno za EA nivo.
 
 `[pauza]`
 
-Rezultat: distraktori postaju merljivo bolji. U pilot evaluaciji, *uverljivost distraktora* — to je metrika gde nezavisni recenzent ocenjuje koliko su distraktori plauzibilni — skočila je sa prosečnih 2.8 na pet, na 3.9 na pet. To je velika razlika kad pričamo o ravnoj površini između „distraktor je očigledno pogrešan" i „distraktor zaista zbunjuje studenta koji nije razumeo dubinski."
+Rezultat kod nas: distraktori postaju merljivo bolji. U našoj pilot evaluaciji, *uverljivost distraktora* — to je metrika gde nezavisni recenzent ocenjuje koliko su distraktori plauzibilni — skočila je sa prosečnih 2.8 na pet, na 3.9 na pet. To je velika razlika kad pričamo o ravnoj površini između „distraktor je očigledno pogrešan" i „distraktor zaista zbunjuje studenta koji nije razumeo dubinski."
 
 `[prelaz]`
 
@@ -401,6 +407,8 @@ Rezultat: distraktori postaju merljivo bolji. U pilot evaluaciji, *uverljivost d
 Najvažniji anti-halucinacioni mehanizam u mom projektu — i možda najjednostavniji.
 
 **Source-line citation.** Za svako pitanje koje LLM proizvede, mora da vrati *doslovni navod iz PDF-a* koji opravdava tačan odgovor.
+
+Ovo je *laka varijanta* **RAG-a — Retrieval-Augmented Generation**, klasičnog rada **Lewis i kolege, 2020**, *„Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks."* Pravi RAG bi povukao chunk iz PDF-a *pre* generisanja i ubacio ga u prompt. Mi to ne radimo direktno — umesto toga, *teramo model* da nakon generisanja vrati svoj izvorni citat. Manje robustno nego pravi RAG, ali jeftino, transparentno, i — što je najvažnije — *vidljivo* recenzentu.
 
 `[pokaži primer JSON levo, opis desno]`
 
@@ -417,6 +425,8 @@ Zašto je ovo važno? Tri razloga.
 **Treće** — studentu se može pokazati objašnjenje koje je vezano za originalni izvor. Kad student promaši, kviz mu može pokazati ne samo „tačan odgovor je X", nego i „evo gde to piše u materijalu, sekcija 4.3, stranica 67."
 
 To je deo šire ideje — **traceability**. Sve što sistem proizvede mora da se može pratiti unazad do nekog izvora — bilo PDF-a, bilo ontološke relacije, bilo eksplicitne pravila.
+
+I još jedan **važan limit**: source_line hvata *krađu citata* — kad model izmisli činjenicu i citat. **Ne hvata** težu vrstu greške: kad je citat *stvaran*, ali ne opravdava odgovor. Za to nam treba moćniji mehanizam — **Chain-of-Verification** — koji ćemo videti u Segmentu C.
 
 `[prelaz na Stefana]`
 
@@ -686,6 +696,8 @@ To što upit vrati — recimo, *(RAM, isFasterThan, Cache, „RAM ima brži pris
 
 Anchor se ubacuje u prompt LLM-a sa instrukcijom: „napravi relacionalno pitanje koje testira *baš ovu vezu.*"
 
+Ovaj pattern — *koristiti knowledge graph kao gradnja-constraint za generisanje pitanja* — nedavno je formalizovan u radu **KAQG** iz 2025, **Lin i kolege**, *„Knowledge-Graph-Enhanced RAG for Difficulty-Controlled Question Generation"*. Mi smo do istog rešenja došli nezavisno, ali nije iznenađujuće da se ideja sazrela u literaturi otprilike u isto vreme. Bez anchor-a, relacionalna pitanja *kližu* prema generičkim poređenjima — *„kako se A razlikuje od B"* tipa. Sa anchor-om, vagi nivo postaje *specifična ivica grafa*.
+
 `[pauza]`
 
 Posledice — tri.
@@ -825,6 +837,145 @@ Sad — sve je ovo lepa teorija. Pitanje koje moramo da postavimo je — **da li
 **Uroš:**
 Segment C. Evaluacija, kvalitet, ograničenja. Glavna teza: **kvalitet automatski generisanog sadržaja opada sa porastom kognitivne složenosti.** To nije bug, to je strukturna posledica — i upravo zato je human-in-the-loop obavezan.
 
+Ali pre nego što dođemo do pilot evaluacije sa ljudskim sudijama, hoću da pokažem nešto što često ostane u senci: **automatski validation stack koji radi pre nego što bilo koji čovek išta vidi.**
+
+`[prelaz]`
+
+---
+
+## (34a — NOVI) Validation stack — 3 sloja — Uroš (~4 min)
+
+**Uroš:**
+Sve što sam vam do sada pokazao u mom projektu — **PS4 prompt template**, **source_line citacija**, **ontology anchor**, **two-pass EA generisanje** — to je samo *prvi sloj* validacije. *Prevention*, ili sprečavanje. Sve se dešava *pre* nego što LLM uopšte krene da generiše.
+
+`[pokaži dijagram 3 sloja]`
+
+Postoje *tri sloja*, i hoću svaki da vam razložim.
+
+**Sloj jedan — PREVENTION, pre LLM poziva.** Tu je PS4 template — Scaria 2024, već smo videli. Tu su Haladyna pravila — Haladyna, Downing i Rodriguez 2002 — koja se ubacuju u prompt kao **numerisana ograničenja**: S1 do S4 za stem, O1 do O7 za opcije. Tu su typed distractor strategies — Bitew 2023 i Sadler 1998. I ontology anchor block — KAQG pattern. **Cilj: smanjiti broj problema na izvoru, pre nego što se dogode.**
+
+**Sloj dva — GENERATION, sam LLM poziv.** Ollama Qwen 2.5 14B, JSON mode, single call. Plus verbatim source_line citacija — Lewis 2020 RAG. Plus two-pass orkestracija za EA pitanja — Bitew 2023. **A za pitanja visokog uloga**, dodajemo **self-consistency** — Wang i kolege 2022, iz rada *„Self-Consistency Improves Chain of Thought Reasoning"*. Originalno korišćeno za matematiku — uzmeš N različitih chain-of-thought putanja i biraš odgovor koji se najviše puta pojavljuje. Mi to adaptiramo: **generišemo N različitih kandidata istog pitanja**, lint-skorujemo svakog, i biramo *najbolji*. Best-of-N pristup. Skupo — ali za high-stakes generisanje, vredi.
+
+**Sloj tri — DETECTION, posle LLM-a a pre nego što bilo koji čovek vidi.** Tu kreće prava priča.
+
+`[pauza]`
+
+Šta sve radimo u detection sloju? Šest različitih provera, paralelno:
+
+Prvo — **Haladyna lint**. Eksplicitan rule engine, 11 automatizovanih pravila iz Haladyna 2002. Skenira generisano pitanje, vraća listu prekršaja sa kodovima (H14, H17, H22, H24, H25, H27...). Pitanje dobija composite skor od 0 do 100 — minus 15 po error, minus 5 po warn. Detalji za sledeći slajd.
+
+Drugo — **Embedding-based plausibility**. Za svaki distraktor, računam cosine similarity prema tačnom odgovoru, koristeći lokalne embedding-e (Ollama nomic-embed-text). Distraktor *previše blizu* — preko 0.92 — verovatno je parafraza i pravi ambiguitet. Distraktor *previše daleko* — ispod 0.40 — trivijalno netačan. BERTScore-style provera, **Zhang i kolege 2020**.
+
+Treće — **Distractor diversity**. Pairwise cosine similarity između distraktora samih. Ako dva od tri distraktora liče jedan na drugog, efektivno imaš dve opcije, ne tri. **Falchikov 2008** je teorijska osnova.
+
+Četvrto, peto i šesto — **Chain-of-Verification**, **Solvability test**, **SOLO LLM-judge**. To su LLM-as-critic tehnike. Drugi slajd ih razlaže detaljno.
+
+`[pauza]`
+
+I još jedan važan princip — **hybrid prevent + detect**. Isti *rule kodovi* postoje **i u promptu i u lint-u**. Ako Haladyna lint vam markira pitanje sa kodom H22 — *„dve opcije su parafraze jedna druge"* — taj isti kod H22 postoji u prompt sekciji OPTION_RULES, kao numerisano ograničenje. To znači **da možete kvotirati grešku iz lint-a nazad u prompt** kao feedback signal. Linkovi su egzaktni.
+
+To je suština ove arhitekture: ne *nadati* se da će LLM uraditi pravo. Nego **ugraditi proveru, pa onda dodatnu proveru**, pa tek onda — kao zadnju liniju — pustiti čoveka.
+
+`[prelaz]`
+
+---
+
+## (34b — NOVI) Haladyna lint — Uroš (~3 min)
+
+**Uroš:**
+Sad jedan slajd o **Haladyna pravilima**, jer je to centralni alat u detection sloju.
+
+`[pokaži tabelu pravila i hybrid dijagram]`
+
+**Haladyna, Downing i Rodriguez, 2002**, *„A Review of Multiple-Choice Item-Writing Guidelines for Classroom Assessment"*. Sistematizovali su **31 pravilo** za pisanje MCQ pitanja, validovano nad *27 udžbenika* i *27 empirijskih studija*. Najuticajniji rad u oblasti MCQ item-writing-a iz proteklih dvadeset godina.
+
+Mi smo izvukli **11 koja se mogu *automatski* proveriti**:
+
+- **H14** — stem se mora završiti pitanjem ili jasnim imperativom.
+- **H16** — stem ispod ~250 znakova, bez ukrasa.
+- **H17** — izbegavaj negaciju; ako mora, *istakni je* boldom.
+- **H19** — tačno jedna tačna opcija.
+- **H21** — numeričke opcije rastuće ili opadajuće, ne nasumice.
+- **H22** — nijedne dve opcije nisu parafraze.
+- **H24** — najduža opcija ne sme biti više od dva puta duža od najkraće. *„Length clue"* — student koji ne zna gradivo bira najdužu po instinktu.
+- **H25** — nikad *„all of the above"* ili *„none of the above"*.
+- **H27** — tačna opcija ne sme biti najduža. *Klasičan give-away.*
+- **O7** — sve opcije gramatički paralelne — isti deo govora, isti vremenski oblik, ista forma.
+
+`[pauza]`
+
+Hybrid arhitektura je suština. **Iste rule kodovi** postoje **i u promptu** (kao prevention) **i u lint-u** (kao detection). LLM se eksplicitno *traži* da ih poštuje pre generisanja. Pa onda — lint *proverava* da li ih je poštovao.
+
+Zašto oboje? Zato što ni jedno samo nije dovoljno.
+
+*Samo prompt* — LLM povremeno propusti pravilo. Često H22 — parafraze između distraktora. Ili H27 — tačan odgovor je duži od distraktora.
+
+*Samo lint* — bez prompta, broj prekršaja bi bio mnogo veći. Haladyna sami pišu u svom radu da su numerisana pravila u promptu *najefektivniji* način da se ona poštuju. Reduce-uju violation rate dramatično.
+
+Score: composite 0 do 100. *„Minus 15 po error, minus 5 po warn."* Ako pitanje padne ispod 70, sistem ga markira kao kandidat za reviziju. Plus — *isti rule kod* (npr. H22) može da se kvotira nazad u prompt rule kao feedback: *„last attempt violated H22, please ensure no two options are paraphrases."*
+
+`[prelaz]`
+
+---
+
+## (34c — NOVI) LLM kao kritičar — Uroš (~4 min)
+
+**Uroš:**
+Detection sloj — najinteresantniji deo. **LLM kao kritičar samog sebe.**
+
+`[pokaži 4 kartice]`
+
+Ideja: koristimo *drugi* LLM (ili isti sa drugačijim promptom i temperaturom 0.1, da bude *deterministički*) da procenjuje izlaz prvog. Ako koristite isti model, samo različit prompt i temperatura — to je *soft* separation. Ako koristite drugi model — recimo Llama 3.1 8B za kritiku, Qwen 2.5 14B za generaciju — to je *hard* separation. Mi podržavamo oba kroz `OLLAMA_JUDGE_MODEL` env var.
+
+Četiri tehnike, redom:
+
+**Tehnika prva — Chain-of-Verification, ili CoVe.** Dhuliawala i kolege, 2023, *„Chain-of-Verification Reduces Hallucination in Large Language Models"*. Četiri koraka.
+
+Korak jedan: uzmi pitanje plus tačan odgovor koje je generator proizveo.
+
+Korak dva: zamoli LLM da *planira* dve do tri kratka verifikacijska pitanja čiji odgovori, u kombinaciji, *potvrđuju ili oboravaju* tačan odgovor.
+
+Korak tri: odgovori na svako verifikacijsko pitanje **nezavisno**, *samo* uz dat izvor iz PDF-a — ne uz originalno pitanje.
+
+Korak četiri: sudi — da li je tačan odgovor *SUPPORTED*, *UNDERDETERMINED*, ili *CONTRADICTED* verifikacijskim dokazima.
+
+Šta CoVe hvata što source_line ne hvata? Slučaj kad je *citat stvaran*, ali *ne opravdava* odgovor. Na primer — citat kaže *„RAM je brža od diska"*, a sistem napravi pitanje *„koliko je RAM brža od diska"* sa odgovorom „100 puta". Citat *postoji*, ali brojka *nije u citatu*. Source_line check prolazi — CoVe ne prolazi.
+
+**Tehnika druga — Solvability test.** *LLM kao slep solver.* Sakrij key od pitanja, izmesaj redosled opcija — da pobedimo *position bias* — i zamoli LLM da odabere najbolju opciju. Ponovi N=5 puta. Rezultat: *„LLM p-value"* — empirijska verovatnoća da model pogodi tačan odgovor.
+
+Interpretacija:
+- p ≈ 1.0 — pitanje trivijalno lako. Verovatno postoji *length clue* ili *grammar clue*.
+- 0.6 do 0.9 — primerena težina za LLM-class solver.
+- p < 0.5 — ili je pitanje *misframed*, ili je key *pogrešan*, ili pitanje testira gradivo *izvan izvora.*
+
+Ovo je sintetički analog klasičnog *item difficulty index*-a iz teorije testova — **Crocker i Algina, 1986**. Razlika je što tradicionalni difficulty index zahteva *stotine studenata da urade test*. Naš se izračuna **pre nego što ijedan student vidi pitanje**, koristeći LLM kao surogat-studenta.
+
+**Tehnika treća — SOLO LLM-judge sa Cohen's kappa.** Drugi LLM klasifikuje pitanje u SOLO nivo — *bez znanja* koji nivo je generator tražio. Onda merimo *agreement* između generatorovog *intent-a* i judge-ovog *klasifikovanja* — kroz **Cohen's kappa** (Cohen 1960, prag tabela Landis i Koch 1977).
+
+Kappa skala:
+- κ ispod 0.20 — *slight* — generator promašuje cilj.
+- 0.21 do 0.40 — *fair*.
+- 0.41 do 0.60 — *moderate* — sistem radi.
+- 0.61 do 0.80 — *substantial* — odlično.
+- 0.81 do 1.00 — *almost perfect*.
+
+Naša pilot evaluacija — kappa između 0.55 i 0.70, što je *moderate-do-substantial*, *zavisno od nivoa.* Unistructural daje najveću kappu, EA najmanju. **A-priori provera *da li je sistem pogodio nivo*, bez ijednog studenta.**
+
+**Tehnika četvrta — Item-Objective Congruence ili IOC.** Rovinelli i Hambleton, 1977. Klasični content validity instrument. Za svaki item, ekspert (kod nas — LLM judge) ocenjuje:
+- **+1** — pitanje *jasno meri* baš taj ishod učenja.
+- **0** — nejasno, moglo bi da meri nešto drugo.
+- **−1** — *ne meri* taj ishod.
+
+IOC index = srednja vrednost svih ocena, u rasponu od minus jedan do plus jedan. Konvencionalni pragovi: **≥ 0.5 prihvatljivo, ≥ 0.75 jako**.
+
+Concept coverage iz Segmenta C — to ćemo videti kasnije — proverava *skup* pitanja protiv *skupa* koncepata. IOC proverava *svako pojedinačno pitanje* protiv *njegovog pojedinačnog ishoda učenja*. Komplementarno.
+
+`[pauza]`
+
+Plus ima još pet tehnika koje ne stignem da prođem detaljno — *Readability* (Flesch & Kincaid 1948/1975), *Linguistic ambiguity detection* (Downing 2005), *Source-grounded misconception mining* (Sadler 1998), *Cloze-style alternate distraktor* (Aldabe 2009), i *POS-based grammatical homogeneity* (Tarrant 2009). Sve u istom spirit-u — *automatska a-priori validacija pre čoveka.*
+
+Razlog što ovo sve radimo — **kvalitet pitanja varira jako između LLM sample-a**. Bez ovog stack-a, nastavnik bi morao da prođe kroz svako pitanje i traži flaws ručno. Sa stack-om, nastavnik dobija pitanja koja su *već prošla* deset različitih provera. *Vreme nastavnika je najskuplji resurs u sistemu — naš dizajn ga štedi maksimalno.*
+
 `[prelaz]`
 
 ---
@@ -832,7 +983,7 @@ Segment C. Evaluacija, kvalitet, ograničenja. Glavna teza: **kvalitet automatsk
 ## (35) Pilot evaluacija — Uroš (~4 min)
 
 **Uroš:**
-Kako merimo kvalitet SOLO pitanja?
+Pošto smo videli automatski validation stack, sad dolazimo do **ljudske pilot evaluacije** — sledeći sloj. Kako merimo kvalitet SOLO pitanja **kada ih čovek pogleda**, a ne automat?
 
 `[pokaži opis levo, tabela desno]`
 
@@ -1306,28 +1457,22 @@ Hvala na pažnji.
 
 ---
 
-## (52)–(53) Literatura — Uroš (~2 min, brzo)
+## (52)–(55) Literatura — Uroš (~3 min, brzo)
 
 **Uroš:**
-Za one koji žele da dublje uđu — literatura je organizovana u šest kategorija. Sve reference su na slajdovima, neću da ih čitam jednu po jednu — ali da naglasim ono što je *najviše uticalo* na naš pristup.
+Za one koji žele da dublje uđu — literatura je organizovana u **četiri strane**, grupisana po temi. Sve reference su na slajdovima, neću da ih čitam jednu po jednu — ali da naglasim ono što je *najviše uticalo* na naš pristup.
 
-**Pedagoške taksonomije** — Biggs i Collis 1982 za SOLO, Anderson i Krathwohl 2001 za revidirani Bloom, Lister 2006 za primenu SOLO u programiranju.
+**Strana 1 — Pedagoške taksonomije i LLM u obrazovanju.** Biggs i Collis 1982 za SOLO, Anderson i Krathwohl 2001 za revidirani Bloom, Lister 2006 za primenu SOLO u programiranju. Plus **Bloom 1984** — čuveni *„2 Sigma Problem"* o jedan-na-jedan tutorstvu kao gornjoj granici onoga što ITS treba da imitira. **Kestin 2024** — Harvard studija o LLM tutoru koji prevazilazi aktivno-učeničku nastavu. **Kasneci 2023**, **Yan 2024**, **Wang 2024** za pregled rizika i stanja. **Mollick i Mollick 2023** za sedam pristupa korišćenja AI u nastavi.
 
-**LLM u obrazovanju** — Kasneci 2023 i Yan 2024 za pregled rizika, Wang 2024 za pregled stanja.
+**Strana 2 — Prompting strategije i misconception theory.** Centralni radovi za moj deo: **Scaria 2024** — PS4 template iz koga smo izveli naš prompt. **Wei 2022** — Chain-of-Thought prompting. **Sweller i Cooper 1985** — worked examples kao zamena za samostalno rešavanje. **Wang 2022** — Self-Consistency, koji nam je inspiracija za best-of-N. **Kurdi 2020** za sistematski pregled question generation. **Bitew 2023** — predictive prompting za distraktore. **Sadler 1998** — psihometrija studentskih misskoncepcija. **Aldabe 2009** — cloze-style distraktori iz korpusa.
 
-**Automatsko generisanje pitanja** — Kurdi 2020 za sistematski pregled, Liang 2018 za distractor generation.
+**Strana 3 — Anti-halucinacija i psihometrija.** **Lewis 2020** — original RAG rad. **Dhuliawala 2023** — CoVe, Chain-of-Verification. **Pal 2023** — Med-HALT, merenje halucinacije medicinski. **Zhang 2020** — BERTScore. **Zheng 2023** — LLM-as-judge framing. Iz psihometrije: **Haladyna, Downing i Rodriguez 2002** — 31 MCQ item-writing pravilo, validovano nad 27 udžbenika. **Rovinelli i Hambleton 1977** — Item-Objective Congruence. **Crocker i Algina 1986** — klasična teorija testova. **Landis i Koch 1977** — pragovi Cohen's kappa. **Tarrant 2009** — empirijska studija nursing-exam flaws.
 
-**Ontologije i Semantic Web** — Vesin 2013 koji je domaći rad iz naše oblasti, Hogan 2021 za knowledge graphs.
-
-**ITS** — Mousavinasab 2021, Lin 2023.
-
-**Multimodalni agenti** — Anthropic Computer Use 2024, OSWorld benchmark Xie 2024.
-
-I dodatne reference koje su od kolega dobile preporuku ili koje smo otkrili u toku rada — Bloom 1984 čuveni „2 Sigma Problem" o jedan-na-jedan tutorstvu kao gornjoj granici onoga što ITS treba da imitira; Kestin 2024 Harvard studija o LLM tutoru koji prevazilazi aktivno-učeničku nastavu; VanLehn 2011 systematic review koji pokazuje da klasični ITS-ovi postižu efektivnost gotovo jednaku ljudskim tutorima.
+**Strana 4 — Ontologije, ITS, Computer Use.** **KAQG Lin 2025** — knowledge graph kao gradnja-constraint za QG. **Vesin 2013** — domaći rad iz naše oblasti, ProTuS. **Hogan 2021** — knowledge graphs survey. **Mousavinasab 2021** i **Lin 2023** — pregledi ITS-a. **VanLehn 2011** — meta-analiza koja pokazuje da klasični ITS-ovi postižu efektivnost gotovo jednaku ljudskim tutorima. **Anthropic Computer Use 2024**, **OSWorld Xie 2024**.
 
 `[pauza]`
 
-Sve reference su skorije od 2015, osim klasičnih anchor-radova — Bloom 1984, Biggs i Collis 1982, Anderson i Krathwohl 2001 — koji su standardne reference u svakoj diskusiji o pedagoškim taksonomijama.
+Sve reference su skorije od 2015 — osim klasičnih anchor-radova kao **Bloom 1984**, **Biggs i Collis 1982**, **Sweller 1985**, **Anderson i Krathwohl 2001**, **Rovinelli i Hambleton 1977**, **Crocker i Algina 1986**, **Landis i Koch 1977**, **Sadler 1998**, **Haladyna 2002** — koji su standardne *anchor* reference u svakoj diskusiji o pedagoškim taksonomijama, item analysis i validity teoriji. Mi smo ih uveli ne zato da bismo *citirali staro*, već zato što su to *temelji* o kojima moderne LLM tehnike *moraju* da se oslone — ili ćemo izmišljati pedagogiju ispočetka.
 
 Hvala još jedanput.
 

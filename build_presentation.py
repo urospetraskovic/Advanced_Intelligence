@@ -1246,8 +1246,16 @@ def body_solo_pregled(slide):
 
     right_x = CONTENT_X + half_w + Inches(0.3)
     right_w = CONTENT_W - half_w - Inches(0.3)
-    add_image_placeholder(slide, right_x, CONTENT_Y, right_w, CONTENT_H,
-                          label="SOLO taksonomija - vizuelni prikaz")
+    add_image_placeholder(slide, right_x, CONTENT_Y, right_w, CONTENT_H - Inches(0.5),
+                          label="SOLO taksonomija - vizuelni prikaz (Biggs & Tang)")
+    # Citatna napomena ispod
+    add_text_box(
+        slide, right_x, CONTENT_Y + CONTENT_H - Inches(0.45), right_w, Inches(0.4),
+        text="Biggs & Collis (1982). Lister et al. (2006) - empirijski "
+             "pokazali da pocetnici programiranja ozbiljno zaostaju na "
+             "Relational i Extended Abstract zadacima.",
+        size=FS_CAPTION, italic=True, color=C_MUTED,
+    )
 
 
 def body_bloom_vs_solo(slide):
@@ -1422,20 +1430,27 @@ def body_uros_solo_ps4(slide):
 
     right_x = CONTENT_X + half_w + Inches(0.4)
     add_text_box(
-        slide, right_x, CONTENT_Y, half_w, Inches(0.4),
+        slide, right_x, CONTENT_Y, half_w, Inches(0.32),
         text="PS4 prompt template",
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
+    )
+    add_text_box(
+        slide, right_x, CONTENT_Y + Inches(0.32), half_w, Inches(0.25),
+        text="Scaria et al. (2024) - PS4 nadmasio PS5 u istom papiru",
+        size=FS_CAPTION, italic=True, color=C_MUTED,
     )
 
     components = [
         ("Persona", "Role priming - LLM kao iskusan pedagog"),
-        ("Pravila",  "SOLO definicija + worked example za nivo"),
-        ("Putanja",  "Chain-of-thought scaffold pre odgovora"),
-        ("Pitanja",  "Output schema + typed distractor strategies"),
+        ("Pravila",  "SOLO def + 1 worked example (cross-domain: fotosinteza)"),
+        ("Putanja",  "Chain-of-thought scaffold - Wei et al. (2022)"),
+        ("Pitanja",  "JSON schema + typed distractors + Haladyna H-rules (2002)"),
     ]
-    gap = Inches(0.12)
-    box_h = (CONTENT_H - Inches(0.5) - 3 * gap) / 4
-    y = CONTENT_Y + Inches(0.5)
+    gap = Inches(0.1)
+    boxes_top = CONTENT_Y + Inches(0.62)
+    cite_h = Inches(0.3)
+    box_h = (CONTENT_H - Inches(0.62) - 3 * gap - cite_h) / 4
+    y = boxes_top
 
     for label, desc in components:
         add_filled_rect(slide, right_x, y, half_w, box_h,
@@ -1453,6 +1468,14 @@ def body_uros_solo_ps4(slide):
         )
         y += box_h + gap
 
+    # Citat ispod 4 box-a
+    add_text_box(
+        slide, right_x, y, half_w, cite_h,
+        text="Worked example cross-domain (fotosinteza, ne OS) - Sweller & Cooper (1985):\n"
+             "studira se STRUKTURA pitanja, ne sadrzaj.",
+        size=FS_CAPTION, italic=True, color=C_MUTED,
+    )
+
 
 def body_two_pass_ea(slide):
     half_w = CONTENT_W / 2 - Inches(0.25)
@@ -1464,7 +1487,7 @@ def body_two_pass_ea(slide):
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
     )
     add_bullet_list(
-        slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, Inches(2.5),
+        slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, Inches(2.4),
         [
             "LLM generise pitanje za EA nivo",
             "Vraca tacan odgovor",
@@ -1474,21 +1497,29 @@ def body_two_pass_ea(slide):
         size=FS_BODY_SM,
     )
 
-    y2 = CONTENT_Y + Inches(3.2)
+    y2 = CONTENT_Y + Inches(3.1)
     add_text_box(
         slide, CONTENT_X, y2, half_w, Inches(0.4),
         text="Pass 2: typed distractors (predictive prompting)",
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
     )
     add_bullet_list(
-        slide, CONTENT_X, y2 + Inches(0.5), half_w, CONTENT_H - (y2 - CONTENT_Y) - Inches(0.6),
+        slide, CONTENT_X, y2 + Inches(0.5), half_w, CONTENT_H - (y2 - CONTENT_Y) - Inches(0.9),
         [
             "Echo: ponovi pitanje i tacan odgovor",
-            "Generisi 3 tipizirana distraktora",
-            "Svaki ima zadati 'tip greske' (overgeneralizacija, povrsno citanje, ...)",
-            "Strategije se biraju iz tabele po SOLO nivou",
+            "Generisi 3 tipizirana distraktora po SOLO nivou:",
+            ("EA: APPLIES_WRONG_PRINCIPLE  /  RIGHT_PRINCIPLE_WRONG_DOMAIN  /  OVER_GENERALIZATION", "sub"),
+            "Strategije zasnovane na Sadler (1998) misconception theory",
         ],
         size=FS_BODY_SM,
+    )
+
+    # Citatna napomena ispod
+    add_text_box(
+        slide, CONTENT_X, CONTENT_Y + CONTENT_H - Inches(0.4), half_w, Inches(0.4),
+        text="Bitew et al. (2023): ~53% distraktora ocenjeno production-ready - "
+             "prevazilazi prethodne SOTA pristupe.",
+        size=FS_CAPTION, italic=True, color=C_MUTED,
     )
 
     # Desno - dijagram dva prolaza
@@ -1561,8 +1592,13 @@ def body_source_line(slide):
         text="Source-line citation kao anti-halucinacija",
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
     )
+    add_text_box(
+        slide, CONTENT_X, CONTENT_Y + Inches(0.32), half_w, Inches(0.25),
+        text="Lagana varijanta RAG-a (Lewis et al., 2020): model surface-uje svoju citaciju.",
+        size=FS_CAPTION, italic=True, color=C_MUTED,
+    )
     add_bullet_list(
-        slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
+        slide, CONTENT_X, CONTENT_Y + Inches(0.62), half_w, CONTENT_H - Inches(0.7),
         [
             ("Sta", "strong"),
             "Uz svako pitanje, LLM mora vratiti doslovni navod iz PDF-a",
@@ -1570,13 +1606,11 @@ def body_source_line(slide):
             "",
             ("Zasto", "strong"),
             "Ako navod ne postoji u izvoru = signal halucinacije",
-            "Lako pregledati u UI: pitanje + citirani odlomak",
-            "Recenzent (ili nastavnik) vidi gde je 'istina'",
+            "Recenzent vidi gde je 'istina' - sekundama, ne minutima",
             "",
-            ("Kako", "strong"),
-            "JSON polje source_line u prompt schemi",
-            "Cuva se u tabeli questions",
-            "QuestionBank UI prikazuje source_line uz svako pitanje",
+            ("Limit", "strong"),
+            "Source_line hvata KRADJU citata - ne hvata pogresnu interpretaciju",
+            "Za to imamo CoVe (Chain-of-Verification) - vidi sledece slajdove",
         ],
         size=FS_BODY_SM,
     )
@@ -1989,8 +2023,13 @@ def body_ontology_anchor(slide):
         text="Ontology anchor kao kontekst pitanja",
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
     )
+    add_text_box(
+        slide, CONTENT_X, CONTENT_Y + Inches(0.32), half_w, Inches(0.25),
+        text="KAQG pattern (Lin et al., 2025) - knowledge graph kao gradnja-constraint.",
+        size=FS_CAPTION, italic=True, color=C_MUTED,
+    )
     add_bullet_list(
-        slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
+        slide, CONTENT_X, CONTENT_Y + Inches(0.62), half_w, CONTENT_H - Inches(0.7),
         [
             "Za relacionalna i EA pitanja",
             "SPARQL bira jedan ConceptRelationship red",
@@ -1998,13 +2037,13 @@ def body_ontology_anchor(slide):
             "Pitanje se gradi oko jedne konkretne veze",
             "",
             ("Posledice", "strong"),
-            "Pitanje je trasabilno: zna se na koju vezu se odnosi",
-            "Lakse za dedup po (anchor, normalized_correct_answer)",
+            "Pitanje je trasabilno - zna se na koju vezu se odnosi",
+            "Dedup po (anchor, normalized_correct_answer) - egzaktno",
             "Lakse za reviziju nastavnika",
             "",
-            ("Tags polje u DB", "strong"),
-            "tags.ontology_anchor = {source, target, type, description}",
-            "tags.distractor_strategies = [...]",
+            ("Bez anchor-a", "strong"),
+            "Relacionalna pitanja 'klize' u genericke poredjenja",
+            "Anchor pretvara vagi nivo u specificnu ivicu grafa",
         ],
         size=FS_BODY_SM,
     )
@@ -2306,6 +2345,268 @@ def body_seg_b_kljucna(slide):
 
 
 # --- SEGMENT C helperi -------------------------------------------------------
+
+def body_validation_stack(slide):
+    """3 sloja a-priori validacije: prevention + generation + detection."""
+    add_text_box(
+        slide, CONTENT_X, CONTENT_Y, CONTENT_W, Inches(0.4),
+        text="Pre nego sto bilo koji student vidi pitanje - 3 sloja provere",
+        size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
+    )
+    add_text_box(
+        slide, CONTENT_X, CONTENT_Y + Inches(0.4), CONTENT_W, Inches(0.3),
+        text="Isti rule kodovi (H14, H17, H22, H27, ...) postoje i u promptu (prevent) i u lint-u (detect).",
+        size=FS_BODY_SM, italic=True, color=C_MUTED,
+    )
+
+    layers = [
+        ("1. PREVENTION", "Pre LLM poziva", C_PRIMARY,
+         ["PS4 template (Scaria 2024) - role + def + 1 worked example + CoT + schema",
+          "Haladyna 2002 rules in prompt: S1-S4 (stem), O1-O7 (options)",
+          "Typed distractor strategies po SOLO nivou (Bitew 2023 + Sadler 1998)",
+          "Ontology anchor block za relacionalna/EA pitanja (KAQG 2025)"]),
+        ("2. GENERATION", "LLM poziv + source grounding", C_ACCENT,
+         ["Ollama Qwen 2.5 14B, single call, JSON mode",
+          "Verbatim source_line citacija (lagani RAG - Lewis 2020)",
+          "Two-pass orchestration za Extended Abstract (Bitew 2023)",
+          "Self-consistency best-of-N (Wang 2022) za high-stakes generisanje"]),
+        ("3. DETECTION", "Posle LLM-a, pre coveka", C_PRIMARY,
+         ["Haladyna lint (11 pravila, 0-100 skor) + Embedding plausibility/diversity",
+          "Chain-of-Verification (Dhuliawala 2023) - LLM proverava sebe",
+          "Solvability test (LLM kao slep solver) + SOLO judge (Cohen's kappa)",
+          "Concept coverage v2 (Kurdi 2020) + IOC + readability + ambiguity"]),
+    ]
+
+    n = len(layers)
+    gap = Inches(0.15)
+    row_h = (CONTENT_H - Inches(0.85) - (n - 1) * gap) / n
+    y = CONTENT_Y + Inches(0.85)
+
+    for label, sub, color, points in layers:
+        add_filled_rect(slide, CONTENT_X, y, CONTENT_W, row_h,
+                        fill=C_CARD_BG, line=C_LIGHT_LINE)
+        add_filled_rect(slide, CONTENT_X, y, Inches(0.15), row_h, fill=color)
+
+        # Levo - label
+        add_text_box(
+            slide, CONTENT_X + Inches(0.3), y + Inches(0.08),
+            Inches(2.6), Inches(0.35),
+            text=label, size=FS_BODY, bold=True, color=color,
+        )
+        add_text_box(
+            slide, CONTENT_X + Inches(0.3), y + Inches(0.42),
+            Inches(2.6), Inches(0.3),
+            text=sub, size=FS_BODY_SM, italic=True, color=C_MUTED,
+        )
+
+        # Desno - bullet lista tehnika
+        add_bullet_list(
+            slide, CONTENT_X + Inches(3.05), y + Inches(0.08),
+            CONTENT_W - Inches(3.2), row_h - Inches(0.15),
+            points, size=FS_BODY_SM,
+        )
+
+        y += row_h + gap
+
+
+def body_haladyna_lint(slide):
+    """11 automatizovanih Haladyna pravila - prevent + detect hybrid."""
+    half_w = CONTENT_W / 2 - Inches(0.2)
+
+    add_text_box(
+        slide, CONTENT_X, CONTENT_Y, half_w, Inches(0.4),
+        text="Haladyna et al. (2002) - 31 pravilo, 11 automatizovanih",
+        size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
+    )
+    add_text_box(
+        slide, CONTENT_X, CONTENT_Y + Inches(0.32), half_w, Inches(0.25),
+        text="Validovano nad 27 udzbenika i 27 empirijskih studija.",
+        size=FS_CAPTION, italic=True, color=C_MUTED,
+    )
+
+    # Levo - tabela glavnih H-pravila
+    headers = ["Kod", "Pravilo"]
+    rows = [
+        ["H14", "Stem se zavrsava pitanjem ili jasnim imperativom"],
+        ["H16", "Stem ispod ~250 znakova, bez ukrasa"],
+        ["H17", "Izbeci negaciju (ili je istakni)"],
+        ["H19", "Tacno jedna tacna opcija"],
+        ["H22", "Nijedne dve opcije nisu parafraze"],
+        ["H24", "Najduza opcija <= 2x najkraca (length clue)"],
+        ["H25", "Nikad 'all/none of the above'"],
+        ["H27", "Tacna opcija NIJE najduza (give-away)"],
+        ["O7",  "Sve opcije gramaticki paralelne"],
+    ]
+    add_styled_table(
+        slide, CONTENT_X, CONTENT_Y + Inches(0.65), half_w,
+        CONTENT_H - Inches(0.75), headers, rows,
+        col_widths=[1, 4.5],
+    )
+
+    # Desno - hybrid prevent+detect dijagram
+    right_x = CONTENT_X + half_w + Inches(0.4)
+    add_text_box(
+        slide, right_x, CONTENT_Y, half_w, Inches(0.4),
+        text="Hybrid: ista pravila u promptu I u lint-u",
+        size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
+    )
+
+    # 3 box-a sa strelicama nadole
+    flow = [
+        ("PROMPT (prevent)", "STEM_RULES + OPTION_RULES sekcije",
+         "LLM eksplicitno cita 11 numerisanih ogranicenja", C_PRIMARY),
+        ("LLM CALL", "Ollama Qwen 2.5 14B",
+         "Generise JSON sa stem, correct, distractors, source_line", C_ACCENT),
+        ("LINT (detect)", "mcq_lint.py rule engine",
+         "Skenira izlaz, vraca H-flag-ove + 0-100 composite skor", C_PRIMARY),
+    ]
+    n = len(flow)
+    arrow_h = Inches(0.3)
+    boxes_top = CONTENT_Y + Inches(0.55)
+    avail = CONTENT_H - Inches(1.4)
+    box_h = (avail - (n - 1) * arrow_h) / n
+    y = boxes_top
+
+    for i, (lbl, sub, desc, color) in enumerate(flow):
+        add_filled_rect(slide, right_x, y, half_w, box_h,
+                        fill=C_CARD_BG, line=C_LIGHT_LINE)
+        add_filled_rect(slide, right_x, y, Inches(0.1), box_h, fill=color)
+        add_text_box(
+            slide, right_x + Inches(0.22), y + Inches(0.08),
+            half_w - Inches(0.3), Inches(0.3),
+            text=lbl, size=FS_BODY_SM, bold=True, color=color,
+        )
+        add_text_box(
+            slide, right_x + Inches(0.22), y + Inches(0.38),
+            half_w - Inches(0.3), Inches(0.25),
+            text=sub, size=FS_CAPTION, italic=True, color=C_MUTED,
+        )
+        add_text_box(
+            slide, right_x + Inches(0.22), y + Inches(0.62),
+            half_w - Inches(0.3), box_h - Inches(0.65),
+            text=desc, size=FS_BODY_SM, color=C_TEXT,
+        )
+
+        if i < n - 1:
+            arrow = slide.shapes.add_shape(
+                MSO_SHAPE.DOWN_ARROW,
+                right_x + half_w / 2 - Inches(0.15), y + box_h + Inches(0.02),
+                Inches(0.3), arrow_h - Inches(0.04),
+            )
+            arrow.fill.solid()
+            arrow.fill.fore_color.rgb = C_ACCENT
+            arrow.line.fill.background()
+
+        y += box_h + arrow_h
+
+    # Donja poruka
+    y_msg = CONTENT_Y + CONTENT_H - Inches(0.4)
+    add_text_box(
+        slide, right_x, y_msg, half_w, Inches(0.4),
+        text="Isti rule kod (H22) i u promptu i u lint-u - "
+             "lint flag se moze kvotirati nazad u prompt rule.",
+        size=FS_CAPTION, italic=True, color=C_ACCENT, align=PP_ALIGN.CENTER,
+    )
+
+
+def body_llm_kao_kriticar(slide):
+    """LLM kao samokriticar: CoVe + Solvability + SOLO judge + IOC."""
+    add_text_box(
+        slide, CONTENT_X, CONTENT_Y, CONTENT_W, Inches(0.4),
+        text="LLM kao kriticar samog sebe - 4 tehnike",
+        size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
+    )
+    add_text_box(
+        slide, CONTENT_X, CONTENT_Y + Inches(0.4), CONTENT_W, Inches(0.3),
+        text="Drugi LLM (ili isti sa razlicitim promptom + temp=0.1) procenjuje izlaz prvog.",
+        size=FS_BODY_SM, italic=True, color=C_MUTED,
+    )
+
+    cards = [
+        ("CoVe",
+         "Chain-of-Verification",
+         "Dhuliawala et al. (2023)",
+         [
+             "1. uzmi pitanje + tacan odgovor",
+             "2. planiraj 2-3 kratka verifikacijska pitanja",
+             "3. odgovori NA SVAKO nezavisno (samo iz izvora)",
+             "4. sudi: SUPPORTED / UNDERDETERMINED / CONTRADICTED",
+             "Hvata slucaj kad citat postoji, ali NE opravdava odgovor",
+         ]),
+        ("Solvability",
+         "LLM kao slep solver",
+         "Crocker & Algina (1986) p-value",
+         [
+             "Sakrij key, izmesaj redosled opcija, N=5 prolaza",
+             "p ~ 1.0 -> trivijalno (ili length clue)",
+             "0.6-0.9 -> primerena tezina za LLM-class solver",
+             "p < 0.5 -> misframed / kljuc pogresan / out of source",
+             "Sinteticki analog klasicnog test-theory difficulty indeksa",
+         ]),
+        ("SOLO judge",
+         "Nezavisna klasifikacija + Cohen's kappa",
+         "Landis & Koch (1977)",
+         [
+             "Drugi LLM klasifikuje pitanje u SOLO nivo",
+             "Bez znanja koji je nivo generator trazio",
+             "kappa < 0.20 slight | 0.41-0.60 moderate",
+             "0.61-0.80 substantial | 0.81+ almost perfect",
+             "A-priori provera 'da li pogodjeno SOLO' bez studenata",
+         ]),
+        ("IOC",
+         "Item-Objective Congruence",
+         "Rovinelli & Hambleton (1977)",
+         [
+             "Za svaki item: ocena -1 / 0 / +1 vs ishod ucenja",
+             "Da li ovo pitanje meri BAS ovaj ishod?",
+             "IOC index = srednja vrednost, [-1, +1]",
+             ">= 0.5 prihvatljivo, >= 0.75 jako",
+             "Content validity - prvi sloj psihometrije",
+         ]),
+    ]
+
+    gap = Inches(0.18)
+    col_w = (CONTENT_W - gap) / 2
+    row_top = CONTENT_Y + Inches(0.78)
+    row_h = (CONTENT_H - Inches(0.85) - gap) / 2
+
+    for i, (name, sub, ref, points) in enumerate(cards):
+        col = i % 2
+        row = i // 2
+        x = CONTENT_X + col * (col_w + gap)
+        y = row_top + row * (row_h + gap)
+
+        add_filled_rect(slide, x, y, col_w, row_h,
+                        fill=C_CARD_BG, line=C_LIGHT_LINE)
+        add_filled_rect(slide, x, y, col_w, Inches(0.08), fill=C_ACCENT)
+
+        pad = Inches(0.22)
+        cur_y = y + Inches(0.18)
+        add_text_box(
+            slide, x + pad, cur_y, col_w - 2 * pad, Inches(0.32),
+            text=name, size=20, bold=True, color=C_PRIMARY,
+        )
+        add_text_box(
+            slide, x + col_w - Inches(2.5) - pad, cur_y,
+            Inches(2.5), Inches(0.32),
+            text=ref, size=FS_CAPTION, italic=True, color=C_MUTED,
+            align=PP_ALIGN.RIGHT,
+        )
+        cur_y += Inches(0.35)
+        add_text_box(
+            slide, x + pad, cur_y, col_w - 2 * pad, Inches(0.28),
+            text=sub, size=FS_BODY_SM, italic=True, color=C_ACCENT,
+        )
+        cur_y += Inches(0.3)
+        add_horizontal_line(slide, x + pad, cur_y, Inches(0.4),
+                            color=C_ACCENT, height=Emu(15000))
+        cur_y += Inches(0.12)
+        add_bullet_list(
+            slide, x + pad, cur_y, col_w - 2 * pad,
+            row_h - (cur_y - y) - Inches(0.15),
+            points, size=FS_BODY_SM, line_spacing=1.15, space_after=2,
+        )
+
 
 def body_pilot_metodologija(slide):
     half_w = CONTENT_W / 2 - Inches(0.2)
@@ -3330,9 +3631,27 @@ def build_presentation(out_path):
         time_str="25 min  /  9 slajdova",
     )))
     slide_specs.append(("content", dict(
+        page_label="Segment C - A-priori validacija",
+        title="Pre nego sto student vidi pitanje - 3 sloja provere",
+        subtitle="Cela 'baterija' tehnika iz literature: prevent + generate + detect, sve pre coveka.",
+        body_func=body_validation_stack,
+    )))
+    slide_specs.append(("content", dict(
+        page_label="Segment C - Haladyna",
+        title="Haladyna item-writing pravila - prevent + detect hybrid",
+        subtitle="Ista pravila u promptu i u lint-u - lint flag se moze kvotirati nazad u prompt rule.",
+        body_func=body_haladyna_lint,
+    )))
+    slide_specs.append(("content", dict(
+        page_label="Segment C - LLM-as-judge",
+        title="LLM kao kriticar samog sebe - CoVe, Solvability, SOLO judge, IOC",
+        subtitle="Posle generisanja, pre coveka: drugi LLM (ili isti sa drugacijim promptom) procenjuje izlaz.",
+        body_func=body_llm_kao_kriticar,
+    )))
+    slide_specs.append(("content", dict(
         page_label="Segment C - Pilot",
-        title="Pilot evaluacija SOLO pitanja",
-        subtitle="Metodologija: PDF lekcije iz vise domena, anotacija po dimenzijama.",
+        title="Pilot evaluacija SOLO pitanja - ljudska anotacija",
+        subtitle="Posle automatske validacije: tim + nezavisan recenzent, 4 dimenzije, Likert 1-5.",
         body_func=body_pilot_metodologija,
     )))
     slide_specs.append(("content", dict(
@@ -3451,17 +3770,42 @@ def build_presentation(out_path):
         ]),
     ]
     literatura_2 = [
-        ("Automatsko generisanje pitanja i anti-halucinacija", [
+        ("Prompting i generisanje pitanja", [
+            "Scaria, N., et al. (2024). PS4 - Automated Educational QG at Bloom's Skill Levels. arXiv:2408.04394.",
+            "Wei, J., et al. (2022). Chain-of-Thought Prompting Elicits Reasoning in LLMs. NeurIPS 2022. arXiv:2201.11903.",
+            "Sweller, J. & Cooper, G.A. (1985). The use of worked examples as a substitute for problem solving. Cognition & Instruction 2(1).",
+            "Wang, X., et al. (2023). Self-Consistency Improves CoT Reasoning. ICLR 2023. arXiv:2203.11171.",
             "Kurdi, G., et al. (2020). A Systematic Review of Automatic Question Generation. IJAIED, 30(1).",
-            "Liang, C., et al. (2018). Distractor Generation for MCQ Using Learning to Rank. NAACL Workshop.",
-            "Pal, A., et al. (2023). Med-HALT: Medical Domain Hallucination Test for LLMs. CoNLL 2023.",
         ]),
-        ("Ontologije i Semantic Web", [
-            "Vesin, B., et al. (2013). Ontology-based architecture with recommendation strategy in Java tutoring. CSIS, 10(1).",
-            "Hogan, A., et al. (2021). Knowledge Graphs. ACM Computing Surveys, 54(4).",
+        ("Distractor generation i misconception theory", [
+            "Bitew, S.K., et al. (2023). Distractor Generation with Predictive Prompting and LLMs. arXiv:2307.16338.",
+            "Sadler, P.M. (1998). Psychometric Models of Student Conceptions in Science. JRST, 35(3).",
+            "Liang, C., et al. (2018). Distractor Generation for MCQ Using Learning to Rank. NAACL Workshop.",
+            "Aldabe, I., et al. (2009). Automatic Distractor Generation for Domain Specific Texts. LNCS 6233.",
         ]),
     ]
     literatura_3 = [
+        ("Anti-halucinacija i RAG", [
+            "Lewis, P., et al. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP. NeurIPS 2020. arXiv:2005.11401.",
+            "Dhuliawala, S., et al. (2023). Chain-of-Verification (CoVe). ACL Findings 2024. arXiv:2309.11495.",
+            "Pal, A., et al. (2023). Med-HALT: Medical Domain Hallucination Test for LLMs. CoNLL 2023.",
+            "Zhang, T., et al. (2020). BERTScore: Evaluating Text Generation with BERT. ICLR 2020. arXiv:1904.09675.",
+            "Zheng, L., et al. (2023). Judging LLM-as-a-Judge with MT-Bench. NeurIPS 2023. arXiv:2306.05685.",
+        ]),
+        ("Item analysis i psihometrija", [
+            "Haladyna, T.M., Downing, S.M. & Rodriguez, M.C. (2002). MCQ Item-Writing Guidelines. Applied Measurement in Education, 15(3).",
+            "Rovinelli, R.J. & Hambleton, R.K. (1977). Item-Objective Congruence (IOC). Dutch Journal of Educational Research, 2.",
+            "Crocker, L. & Algina, J. (1986). Introduction to Classical and Modern Test Theory. Holt, Rinehart and Winston.",
+            "Landis, J.R. & Koch, G.G. (1977). Observer Agreement for Categorical Data (Cohen's kappa). Biometrics, 33(1).",
+            "Tarrant, M., et al. (2009). Item writing flaws in MCQs in high-stakes nursing assessments. Nurse Education in Practice, 9(3).",
+        ]),
+    ]
+    literatura_4 = [
+        ("Ontologije i Semantic Web", [
+            "Lin, C.-Y., et al. (2025). KAQG: Knowledge-Graph-Enhanced RAG for Difficulty-Controlled QG. arXiv:2505.07618.",
+            "Vesin, B., et al. (2013). Ontology-based architecture with recommendation strategy in Java tutoring (ProTuS). CSIS, 10(1).",
+            "Hogan, A., et al. (2021). Knowledge Graphs. ACM Computing Surveys, 54(4).",
+        ]),
         ("Intelligent Tutoring Systems", [
             "Mousavinasab, E., et al. (2021). ITS: systematic review. Interactive Learning Environments, 29(1).",
             "Lin, C.-C., et al. (2023). AI in ITS toward sustainable education. Smart Learning Environments, 10(1).",
@@ -3474,22 +3818,28 @@ def build_presentation(out_path):
     ]
 
     slide_specs.append(("references", dict(
-        page_label="Literatura - 1 / 3",
+        page_label="Literatura - 1 / 4",
         title="Literatura",
         subtitle="Pedagoske taksonomije i LLM u obrazovanju",
         refs=literatura_1,
     )))
     slide_specs.append(("references", dict(
-        page_label="Literatura - 2 / 3",
+        page_label="Literatura - 2 / 4",
         title="Literatura (nastavak)",
-        subtitle="Generisanje pitanja, anti-halucinacija, ontologije",
+        subtitle="Prompting strategije, QG i misconception theory",
         refs=literatura_2,
     )))
     slide_specs.append(("references", dict(
-        page_label="Literatura - 3 / 3",
+        page_label="Literatura - 3 / 4",
         title="Literatura (nastavak)",
-        subtitle="Intelligent Tutoring Systems i multimodalni agenti",
+        subtitle="Anti-halucinacija, RAG, item analysis i psihometrija",
         refs=literatura_3,
+    )))
+    slide_specs.append(("references", dict(
+        page_label="Literatura - 4 / 4",
+        title="Literatura (nastavak)",
+        subtitle="Ontologije, ITS i multimodalni agenti",
+        refs=literatura_4,
     )))
 
     total_pages = len(slide_specs)

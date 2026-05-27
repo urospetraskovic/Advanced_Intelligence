@@ -1,13 +1,13 @@
 """
-Generator PPTX prezentacije za predmet "Napredne tehnike racunarske inteligencije".
+Generator PPTX prezentacije za predmet "Napredne tehnike računarske inteligencije".
 
 Tema: LLM-driven pipeline za automatizovan Intelligent Tutoring System
-Tim: Uros Petraskovic, Luka Saric, Stefan Lazarevic
+Tim: Uroš Petrašković, Luka Šarić, Stefan Lazarević
 
 Dizajn principi:
-- Sve pozicije se izvode iz LAYOUT konstanti (responsive, simetricno, bez hardkodovanja).
-- Helperi za naslov, sadrzaj, tabele, citate, image placeholder-e, kod.
-- Minimalisticki: belina, jasna hijerarhija, akcentna boja samo za fokus.
+- Sve pozicije se izvode iz LAYOUT konstanti (responsive, simetrično, bez hardkodovanja).
+- Helperi za naslov, sadržaj, tabele, citate, image placeholder-e, kod.
+- Minimalistički: belina, jasna hijerarhija, akcentna boja samo za fokus.
 - Image placeholder = svetlosivi okvir sa labelom (mesto da tim ubaci sliku).
 """
 
@@ -25,11 +25,11 @@ from lxml import etree
 # DIZAJN TOKENI
 # =============================================================================
 
-# Boje (akademski, minimalisticki ton)
+# Boje (akademski, minimalistički ton)
 C_PRIMARY      = RGBColor(0x1B, 0x36, 0x5D)   # tamno teget (naslovi, akcenti)
 C_ACCENT       = RGBColor(0xC2, 0x57, 0x00)   # topla bakarna (highlights, brojevi)
 C_TEXT         = RGBColor(0x1F, 0x29, 0x37)   # skoro crna
-C_MUTED        = RGBColor(0x4B, 0x55, 0x63)   # siva za sekundarni tekst (pojacan kontrast)
+C_MUTED        = RGBColor(0x4B, 0x55, 0x63)   # siva za sekundarni tekst (pojačan kontrast)
 C_LIGHT_LINE   = RGBColor(0xE5, 0xE7, 0xEB)   # svetle linije i borderi
 C_CARD_BG      = RGBColor(0xF5, 0xF6, 0xF8)   # svetla pozadina kartica
 C_IMG_BG       = RGBColor(0xEE, 0xEF, 0xF2)   # placeholder pozadina
@@ -78,7 +78,7 @@ CONTENT_Y          = MARGIN_TOP + HEADER_H + GAP_AFTER_HEADER
 CONTENT_H          = SLIDE_H - CONTENT_Y - MARGIN_BOTTOM - FOOTER_H
 
 # Konstantne reference za prezentaciju
-PROJECT_FOOTER     = "LLM-driven ITS pipeline - Napredne tehnike racunarske inteligencije"
+PROJECT_FOOTER     = "LLM-driven ITS pipeline - Napredne tehnike računarske inteligencije"
 
 
 # =============================================================================
@@ -176,27 +176,15 @@ def add_header(slide, *, title, subtitle=None, page_label=None):
             text=subtitle, size=FS_SUBTITLE, italic=True, color=C_MUTED,
         )
 
-    # Akcentna linija na dnu zaglavlja
-    line_y = MARGIN_TOP + HEADER_H - Inches(0.05)
-    add_horizontal_line(slide, MARGIN_X, line_y, CONTENT_W,
-                        color=C_LIGHT_LINE, height=Emu(15000))
-
 
 def add_footer(slide, *, page_number=None, total=None):
-    """Diskretan footer: broj slajda dole desno, sitna labela dole levo."""
+    """Diskretan footer: sitna labela dole levo (bez slide counter-a)."""
     y = SLIDE_H - FOOTER_H - Inches(0.05)
     add_text_box(
-        slide, MARGIN_X, y, CONTENT_W * 0.7, FOOTER_H,
+        slide, MARGIN_X, y, CONTENT_W, FOOTER_H,
         text=PROJECT_FOOTER, size=FS_FOOTER, color=C_MUTED,
         anchor=MSO_ANCHOR.MIDDLE,
     )
-    if page_number is not None and total is not None:
-        add_text_box(
-            slide, MARGIN_X + CONTENT_W * 0.7, y, CONTENT_W * 0.3, FOOTER_H,
-            text=f"{page_number} / {total}", size=FS_FOOTER,
-            bold=True, color=C_PRIMARY, align=PP_ALIGN.RIGHT,
-            anchor=MSO_ANCHOR.MIDDLE,
-        )
 
 
 def add_card(slide, x, y, w, h, *, title=None, body_lines=None,
@@ -233,7 +221,7 @@ def add_card(slide, x, y, w, h, *, title=None, body_lines=None,
 
 def add_image_placeholder(slide, x, y, w, h, *, label="Slika"):
     """
-    Vizuelni placeholder za buduce ubacivanje slike.
+    Vizuelni placeholder za buduće ubacivanje slike.
     Pravi svetlo-sivi okvir sa labelom u centru.
     """
     add_filled_rect(slide, x, y, w, h, fill=C_IMG_BG,
@@ -262,11 +250,11 @@ def add_bullet_list(slide, x, y, w, h, items, *,
                     size=FS_BODY, color=C_TEXT, line_spacing=1.25,
                     space_after=4, bullet_char="•"):
     """
-    Bullet lista. items moze biti:
-      - string: obican bullet
+    Bullet lista. items može biti:
+      - string: običan bullet
       - (text, "strong"): section header (uppercase, accent, bez crtice)
       - (text, "sub"): indented sub-bullet
-    Prazan string "" pravi mali vertikalni razmak izmedju grupa.
+    Prazan string "" pravi mali vertikalni razmak između grupa.
     """
     tb = slide.shapes.add_textbox(x, y, w, h)
     tf = tb.text_frame
@@ -291,7 +279,7 @@ def add_bullet_list(slide, x, y, w, h, items, *,
         p.line_spacing = line_spacing
 
         if text == "":
-            # Spacer izmedju grupa
+            # Spacer između grupa
             p.space_after = Pt(6)
             p.space_before = Pt(0)
             run = p.add_run()
@@ -322,7 +310,7 @@ def add_bullet_list(slide, x, y, w, h, items, *,
 
 def add_two_column_bullets(slide, x, y, w, h, left_title, left_items,
                             right_title, right_items, *, gap=Inches(0.35)):
-    """Dve simetricne kolone sa naslovima i bulletima."""
+    """Dve simetrične kolone sa naslovima i bulletima."""
     col_w = (w - gap) / 2
 
     # Levo
@@ -574,7 +562,7 @@ def make_thank_you_slide(prs, *, team):
 
     add_text_box(
         slide, Inches(0.85), Inches(2.8), SLIDE_W - Inches(1.7), Inches(1.4),
-        text="Hvala na paznji.", size=54, bold=True, color=C_WHITE,
+        text="Hvala na pažnji.", size=54, bold=True, color=C_WHITE,
         align=PP_ALIGN.CENTER,
     )
 
@@ -602,15 +590,15 @@ def make_thank_you_slide(prs, *, team):
 # SADRZAJ - SLAJDOVI
 # =============================================================================
 # Svaki body_* helper prima 'slide' i koristi CONTENT_X / CONTENT_Y /
-# CONTENT_W / CONTENT_H za simetrican raspored.
+# CONTENT_W / CONTENT_H za simetričan raspored.
 
 def body_agenda(slide):
     items = [
-        ("Uvod i motivacija",            "10 min", "Sta i zasto - od ishoda ucenja do ITS-a"),
+        ("Uvod i motivacija",            "10 min", "Šta i zašto - od ishoda učenja do ITS-a"),
         ("LLM prompting i taksonomije",  "25 min", "Bloom, SOLO, PS4 prompting, hijerarhija zadataka"),
         ("Ontologije i formalni grounding","25 min", "OWL, RDF, SPARQL i anti-halucinacioni mehanizmi"),
-        ("Evaluacija i ogranicenja",     "25 min", "Kvalitet po nivoima, robustnost, human-in-the-loop"),
-        ("Sinteza, buduci rad, zakljucak","10-15 min","Integrisana arhitektura i naredni koraci"),
+        ("Evaluacija i ograničenja",     "25 min", "Kvalitet po nivoima, robustnost, human-in-the-loop"),
+        ("Sinteza, budući rad, zaključak","10-15 min","Integrisana arhitektura i naredni koraci"),
     ]
 
     n = len(items)
@@ -656,15 +644,15 @@ def body_agenda(slide):
 
 def body_team(slide):
     members = [
-        ("Uros Petraskovic",
+        ("Uroš Petrašković",
          "SOLO Quiz Generator",
-         "Generisanje pitanja po SOLO taksonomiji uz ontoloski grounding i source-line citate."),
-        ("Luka Saric",
+         "Generisanje pitanja po SOLO taksonomiji uz ontološki grounding i source-line citate."),
+        ("Luka Šarić",
          "Course Structure Generator",
          "Automatska struktura kursa po Bloomovoj taksonomiji - moduli, koncepti, ishodi."),
-        ("Stefan Lazarevic",
+        ("Stefan Lazarević",
          "Computer Use Video Tutorials",
-         "Video demonstracije praktickih zadataka uz OWL validaciju izvrsnog plana."),
+         "Video demonstracije praktičkih zadataka uz OWL validaciju izvršnog plana."),
     ]
 
     gap = Inches(0.3)
@@ -733,9 +721,9 @@ def body_predmet_context(slide):
     add_bullet_list(
         slide, CONTENT_X, CONTENT_Y, half_w, CONTENT_H,
         [
-            ("Predmet: Napredne tehnike racunarske inteligencije", "strong"),
+            ("Predmet: Napredne tehnike računarske inteligencije", "strong"),
             "Master studije, FTN Univerzitet u Novom Sadu",
-            "Predavaci: dr Prokic i dr Kovacevic",
+            "Predavači: dr Prokić i dr Kovačević",
             "",
             ("Tema u preseku dve oblasti", "strong"),
             "AI in (Computing) Education",
@@ -757,7 +745,7 @@ def body_predmet_context(slide):
 
 
 def body_problem_stats(slide):
-    """3 brojke + sazet opis problema."""
+    """3 brojke + sažet opis problema."""
     # Gornji red - 3 velike brojke
     stats_h = Inches(2.1)
     gap = Inches(0.3)
@@ -766,10 +754,10 @@ def body_problem_stats(slide):
     stats = [
         ("~20%",
          "radnog vremena nastavnika",
-         "trosi se na pripremu i administraciju (OECD TALIS 2018, prosek)"),
+         "troši se na pripremu i administraciju (OECD TALIS 2018, prosek)"),
         ("7-12 h",
          "nedeljno na pripremu",
-         "van casa, samo na materijale (NCES 2019 Teacher Time Study)"),
+         "van časa, samo na materijale (NCES 2019 Teacher Time Study)"),
         ("22 min",
          "po jednom MCQ pitanju",
          "sa distraktorima i mapiranjem na ishod (Walker et al., 2020)"),
@@ -802,17 +790,17 @@ def body_problem_stats(slide):
     y2 = CONTENT_Y + stats_h + Inches(0.4)
     add_text_box(
         slide, CONTENT_X, y2, CONTENT_W, Inches(0.4),
-        text="Sta nastavnik radi rucno?", size=FS_SUBTITLE, bold=True,
+        text="Šta nastavnik radi ručno?", size=FS_SUBTITLE, bold=True,
         color=C_PRIMARY,
     )
     add_bullet_list(
         slide, CONTENT_X, y2 + Inches(0.45), CONTENT_W,
         CONTENT_H - (y2 + Inches(0.45) - CONTENT_Y),
         [
-            "Planira strukturu kursa - module, koncepte, ishode ucenja",
-            "Pise objasnjenja, primere, definicije - usaglasava ih sa nivoom studenata",
-            "Priprema praktiche demonstracije, cesto u formi video tutorijala",
-            "Sastavlja pitanja na razlicitim kognitivnim nivoima - i tu nastaje uska grla",
+            "Planira strukturu kursa - module, koncepte, ishode učenja",
+            "Piše objašnjenja, primere, definicije - usaglašava ih sa nivoom studenata",
+            "Priprema praktične demonstracije, često u formi video tutorijala",
+            "Sastavlja pitanja na različitim kognitivnim nivoima - i tu nastaje uska grla",
         ],
         size=FS_BODY,
     )
@@ -827,9 +815,9 @@ def body_llm_kao_odgovor(slide):
     add_bullet_list(
         slide, CONTENT_X, CONTENT_Y + Inches(0.45), half_w, CONTENT_H - Inches(0.5),
         [
-            "Generisanje sadrzaja iz prirodno-jezickog uputstva",
+            "Generisanje sadržaja iz prirodno-jezičkog uputstva",
             "Razlaganje kompleksnih zadataka",
-            "Brza iteracija i prilagodjavanje materijala",
+            "Brza iteracija i prilagođavanje materijala",
             "Multimodalnost: tekst, kod, vizija",
         ],
         size=FS_BODY,
@@ -844,31 +832,31 @@ def body_llm_kao_odgovor(slide):
     add_bullet_list(
         slide, right_x, CONTENT_Y + Inches(0.45), half_w, CONTENT_H - Inches(0.5),
         [
-            "Halucinacije - izmisljene cinjenice",
-            "Genericnost izlaza, malo veze sa konkretnim materijalom",
-            "Pitanja na pogresnom kognitivnom nivou",
+            "Halucinacije - izmišljene činjenice",
+            "Generičnost izlaza, malo veze sa konkretnim materijalom",
+            "Pitanja na pogrešnom kognitivnom nivou",
             "Nedostatak formalne strukture i ponovljivosti",
-            "Tesko proveriti gde se sta oslonilo na izvor",
+            "Teško proveriti gde se šta oslonilo na izvor",
         ],
         size=FS_BODY,
     )
 
 
 def body_why_now(slide):
-    """Tri istorijska / empirijska argumenta za 'zasto sad'."""
+    """Tri istorijska / empirijska argumenta za 'zašto sad'."""
     cards = [
         ("Bloom (1984)",
          "'2 Sigma Problem'",
-         "1-na-1 tutoring podize prosecnog studenta na ~98. percentil. "
-         "ITS poslednjih 40 godina pokusava da se priblizi ovom efektu."),
+         "1-na-1 tutoring podiže prosečnog studenta na ~98. percentil. "
+         "ITS poslednjih 40 godina pokušava da se približi ovom efektu."),
         ("Khan Academy (2023+)",
-         "Khanmigo u skolama",
-         "Prvi mainstream LLM tutor u nastavi. Vec u 100+ skolskih distrikta "
-         "u SAD. AI tutori vise nisu istrazivanje - produkcija su."),
+         "Khanmigo u školama",
+         "Prvi mainstream LLM tutor u nastavi. Već u 100+ školskih distrikta "
+         "u SAD. AI tutori više nisu istraživanje - produkcija su."),
         ("Kestin et al. (Harvard, 2024)",
          "AI tutor > active learning",
-         "U kontrolisanoj studiji iz fizike, GPT-4 tutor je nadmasio "
-         "aktivno-ucenicku nastavu, i to za pola vremena. Empirijski signal "
+         "U kontrolisanoj studiji iz fizike, GPT-4 tutor je nadmašio "
+         "aktivno-učeničku nastavu, i to za pola vremena. Empirijski signal "
          "da je tehnologija sazrela."),
     ]
     gap = Inches(0.3)
@@ -901,11 +889,11 @@ def body_why_now(slide):
             text=body, size=FS_BODY_SM, color=C_TEXT,
         )
 
-    # Donji red - sazeta poruka
+    # Donji red - sažeta poruka
     y2 = CONTENT_Y + CONTENT_H - Inches(0.3)
     add_text_box(
         slide, CONTENT_X, y2, CONTENT_W, Inches(0.3),
-        text="Pitanje vise nije 'da li LLM moze nešto' - pitanje je 'kako ga koristimo dobro'.",
+        text="Pitanje više nije 'da li LLM može nešto' - pitanje je 'kako ga koristimo dobro'.",
         size=FS_BODY_SM, italic=True, color=C_MUTED, align=PP_ALIGN.CENTER,
     )
 
@@ -920,12 +908,12 @@ def body_its_landscape(slide):
 
     items = [
         ("Carnegie Learning / ALEKS",
-         "Klasicni cognitive tutor",
-         "~30 godina, rule-based, jaka pedagoska teorija (ACT-R), bez LLM-a.",
+         "Klasični cognitive tutor",
+         "~30 godina, rule-based, jaka pedagoška teorija (ACT-R), bez LLM-a.",
          C_MUTED),
         ("Khan Academy Khanmigo",
          "LLM-driven, 2023+",
-         "GPT-4 zasnovan tutor; cuvar konteksta + nastavnicki dashboard.",
+         "GPT-4 zasnovan tutor; čuvar konteksta + nastavnički dashboard.",
          C_PRIMARY),
         ("Duolingo Max",
          "LLM-driven jezici, 2023+",
@@ -971,7 +959,7 @@ def body_its_landscape(slide):
 def body_vizija_pipeline(slide):
     # Pipeline kao 5 koraka
     steps = [
-        ("Ulaz",          "Ishodi ucenja\nPDF materijal\nNL instrukcije"),
+        ("Ulaz",          "Ishodi učenja\nPDF materijal\nNL instrukcije"),
         ("Struktura",     "Bloom-driven\nmoduli i ishodi"),
         ("Ontologija",    "OWL/RDF\nkonceptualne relacije"),
         ("Generisanje",   "SOLO pitanja\nvideo demoi"),
@@ -1022,7 +1010,7 @@ def body_vizija_pipeline(slide):
             arrow.fill.fore_color.rgb = C_ACCENT
             arrow.line.fill.background()
 
-    # Ispod - kljucna poruka
+    # Ispod - ključna poruka
     y2 = y + box_h + Inches(0.3)
     add_filled_rect(slide, CONTENT_X, y2, CONTENT_W, CONTENT_H - (y2 - CONTENT_Y) - Inches(0.1),
                     fill=C_CARD_BG, line=None)
@@ -1036,7 +1024,7 @@ def body_vizija_pipeline(slide):
     add_text_box(
         slide, CONTENT_X + Inches(0.3), y2 + Inches(0.5),
         CONTENT_W - Inches(0.5), Inches(0.8),
-        text="Od ishoda ucenja, automatski, do snimljene video demonstracije i SOLO kviza - bez rucne intervencije.",
+        text="Od ishoda učenja, automatski, do snimljene video demonstracije i SOLO kviza - bez rucne intervencije.",
         size=FS_BODY, color=C_TEXT,
     )
 
@@ -1054,11 +1042,11 @@ def body_tri_komponente(slide):
          "Video demonstracije",
          "OWL ontologija + Computer Use",
          ["NL instrukcija -> Task / Step / Action",
-          "OWL validacija plana pre izvrsenja",
-          "SPARQL upiti vode izvrsavanje",
+          "OWL validacija plana pre izvršenja",
+          "SPARQL upiti vode izvršavanje",
           "Vision (Qwen 2.5 VL) za UI detekciju",
           "FFmpeg snima MP4 tutorijal"]),
-        ("Uros",
+        ("Uroš",
          "SOLO pitanja",
          "Ontology-grounded MCQ",
          ["4 SOLO nivoa: U / M / R / EA",
@@ -1115,7 +1103,7 @@ def body_kljucna_poruka_uvod(slide):
     # Centriran citat sa "formula" stilom
     add_text_box(
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), CONTENT_W, Inches(0.5),
-        text="Kljucna poruka prezentacije", size=FS_SECTION_LABEL, bold=True,
+        text="Ključna poruka prezentacije", size=FS_SECTION_LABEL, bold=True,
         color=C_ACCENT, align=PP_ALIGN.CENTER,
     )
 
@@ -1133,7 +1121,7 @@ def body_kljucna_poruka_uvod(slide):
     # Formula liniju po liniju
     add_text_box(
         slide, box_x, box_y + Inches(0.4), box_w, Inches(0.6),
-        text="LLM  +  ontologija  +  pedagoska taksonomija",
+        text="LLM  +  ontologija  +  pedagoška taksonomija",
         size=32, bold=True, color=C_PRIMARY,
         align=PP_ALIGN.CENTER,
     )
@@ -1144,7 +1132,7 @@ def body_kljucna_poruka_uvod(slide):
     )
     add_text_box(
         slide, box_x, box_y + Inches(1.55), box_w, Inches(0.5),
-        text="pouzdano, pedagoski kalibrisano ITS okruzenje",
+        text="pouzdano, pedagoški kalibrisano ITS okruženje",
         size=22, italic=True, color=C_TEXT,
         align=PP_ALIGN.CENTER,
     )
@@ -1152,7 +1140,7 @@ def body_kljucna_poruka_uvod(slide):
     # Sub
     add_text_box(
         slide, CONTENT_X, box_y + box_h + Inches(0.25), CONTENT_W, Inches(0.5),
-        text="vise od zbira svojih delova",
+        text="više od zbira svojih delova",
         size=FS_SUBTITLE, italic=True, color=C_MUTED,
         align=PP_ALIGN.CENTER,
     )
@@ -1163,10 +1151,10 @@ def body_kljucna_poruka_uvod(slide):
 def body_bloom_pregled(slide):
     levels = [
         ("Pamtiti",      "Cinjenice, definicije, terminologija"),
-        ("Razumeti",     "Objasnjenje, parafraziranje"),
+        ("Razumeti",     "Objašnjenje, parafraziranje"),
         ("Primeniti",    "Resavanje analognih problema"),
-        ("Analizirati",  "Razlaganje, poredjenje"),
-        ("Evaluirati",   "Procena, kriticko misljenje"),
+        ("Analizirati",  "Razlaganje, poređenje"),
+        ("Evaluirati",   "Procena, kritičko mišljenje"),
         ("Kreirati",     "Sinteza, novi rad"),
     ]
     half_w = CONTENT_W * 0.55
@@ -1206,13 +1194,13 @@ def body_bloom_pregled(slide):
 def body_solo_pregled(slide):
     levels = [
         ("Unistructural",
-         "Jedna izolovana cinjenica",
+         "Jedna izolovana činjenica",
          "Setiti se jednog elementa"),
         ("Multistructural",
-         "Vise nepovezanih cinjenica",
+         "Više nepovezanih činjenica",
          "Prepoznati skup elemenata"),
         ("Relational",
-         "Veza izmedju koncepata",
+         "Veza između koncepata",
          "Razumeti strukturu i odnose"),
         ("Extended Abstract",
          "Generalizacija i transfer",
@@ -1252,7 +1240,7 @@ def body_solo_pregled(slide):
     add_text_box(
         slide, right_x, CONTENT_Y + CONTENT_H - Inches(0.45), right_w, Inches(0.4),
         text="Biggs & Collis (1982). Lister et al. (2006) - empirijski "
-             "pokazali da pocetnici programiranja ozbiljno zaostaju na "
+             "pokazali da početnici programiranja ozbiljno zaostaju na "
              "Relational i Extended Abstract zadacima.",
         size=FS_CAPTION, italic=True, color=C_MUTED,
     )
@@ -1261,11 +1249,11 @@ def body_solo_pregled(slide):
 def body_bloom_vs_solo(slide):
     headers = ["Aspekt", "Bloom (revidirana)", "SOLO"]
     rows = [
-        ["Tip hijerarhije",      "Tipovi misaonih operacija", "Strukturalna slozenost odgovora"],
-        ["Broj nivoa",           "6 nivoa", "5 nivoa (ukljucujuci prestructural)"],
+        ["Tip hijerarhije",      "Tipovi misaonih operacija", "Strukturalna složenost odgovora"],
+        ["Broj nivoa",           "6 nivoa", "5 nivoa (uključujući prestructural)"],
         ["Osnovna jedinica",     "Glagol akcije (znati, primeniti, ...)", "Broj i organizacija elemenata u odgovoru"],
-        ["Tipicna upotreba",     "Planiranje aktivnosti i ishoda ucenja", "Evaluacija dubine ucenja"],
-        ["Mi koristimo za",      "Strukturu kursa (Luka)", "Generisanje pitanja (Uros)"],
+        ["Tipična upotreba",     "Planiranje aktivnosti i ishoda učenja", "Evaluacija dubine učenja"],
+        ["Mi koristimo za",      "Strukturu kursa (Luka)", "Generisanje pitanja (Uroš)"],
         ["Glavna prednost",      "Direktna veza sa nastavnim aktivnostima", "Direktna veza sa kognitivnom dubinom"],
     ]
     add_styled_table(slide, CONTENT_X, CONTENT_Y, CONTENT_W,
@@ -1280,12 +1268,12 @@ def body_bloom_vs_solo(slide):
     add_text_box(
         slide, CONTENT_X + Inches(0.25), y2 + Inches(0.1),
         CONTENT_W - Inches(0.4), Inches(0.4),
-        text="Zasto obe?", size=FS_BODY, bold=True, color=C_PRIMARY,
+        text="Zašto obe?", size=FS_BODY, bold=True, color=C_PRIMARY,
     )
     add_text_box(
         slide, CONTENT_X + Inches(0.25), y2 + Inches(0.45),
         CONTENT_W - Inches(0.4), Inches(0.6),
-        text="Bloom upravlja STA generisemo (tipovi aktivnosti), SOLO upravlja KOLIKO DUBOKO se proverava (kognitivni nivoi pitanja).",
+        text="Bloom upravlja STA generišemo (tipovi aktivnosti), SOLO upravlja KOLIKO DUBOKO se proverava (kognitivni nivoi pitanja).",
         size=FS_BODY_SM, color=C_TEXT,
     )
 
@@ -1303,14 +1291,14 @@ def body_luka_struktura(slide):
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
         [
             ("Ulaz", "strong"),
-            "Tema kursa i opsti opis",
-            "Lista ciljeva (ishoda ucenja)",
+            "Tema kursa i opšti opis",
+            "Lista ciljeva (ishoda učenja)",
             "",
             ("LLM prolaz po nivou", "strong"),
-            "Generise module iz teme",
-            "Generise koncepte iz modula",
-            "Generise ishode iz koncepata",
-            "Generise aktivnosti iz ishoda",
+            "Generiše module iz teme",
+            "Generiše koncepte iz modula",
+            "Generiše ishode iz koncepata",
+            "Generiše aktivnosti iz ishoda",
             "",
             ("Bloomovo mapiranje", "strong"),
             "Svaka aktivnost dobija Bloomov nivo",
@@ -1367,15 +1355,15 @@ def body_luka_prompt_template(slide):
     add_bullet_list(
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
         [
-            ("Sta ulazi u prompt", "strong"),
+            ("Šta ulazi u prompt", "strong"),
             "Tema i kontekst kursa",
-            "Lista ciljeva ucenja (ishoda)",
-            "Bloomov nivo koji se traci",
-            "Stanje vec generisanog sadrzaja",
+            "Lista ciljeva učenja (ishoda)",
+            "Bloomov nivo koji se traži",
+            "Stanje već generisanog sadržaja",
             "",
             ("Anti-redundancija", "strong"),
             "Prethodno generisane aktivnosti se ubacuju u prompt",
-            "LLM se eksplicitno trazi da izbegne ponavljanje",
+            "LLM se eksplicitno traži da izbegne ponavljanje",
             "Daje koherentnost preko celog kursa",
         ],
         size=FS_BODY_SM,
@@ -1386,11 +1374,11 @@ def body_luka_prompt_template(slide):
     code = (
         "Role: ti si iskusan instructional designer.\n"
         "Tema kursa: {tema}\n"
-        "Ciljevi ucenja:\n"
+        "Ciljevi učenja:\n"
         "  - {cilj_1}\n"
         "  - {cilj_2}\n\n"
-        "Generisi N aktivnosti za nivo: {bloom_level}.\n"
-        "Vec generisane aktivnosti (ne ponavljaj):\n"
+        "Generiši N aktivnosti za nivo: {bloom_level}.\n"
+        "Već generisane aktivnosti (ne ponavljaj):\n"
         "  - {prev_activity_1}\n"
         "  - {prev_activity_2}\n\n"
         "Format izlaza: JSON sa poljima\n"
@@ -1405,7 +1393,7 @@ def body_uros_solo_ps4(slide):
 
     add_text_box(
         slide, CONTENT_X, CONTENT_Y, half_w, Inches(0.4),
-        text="SOLO Quiz Generator (Uros)",
+        text="SOLO Quiz Generator (Uroš)",
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
     )
     add_bullet_list(
@@ -1436,7 +1424,7 @@ def body_uros_solo_ps4(slide):
     )
     add_text_box(
         slide, right_x, CONTENT_Y + Inches(0.32), half_w, Inches(0.25),
-        text="Scaria et al. (2024) - PS4 nadmasio PS5 u istom papiru",
+        text="Scaria et al. (2024) - PS4 nadmašio PS5 u istom papiru",
         size=FS_CAPTION, italic=True, color=C_MUTED,
     )
 
@@ -1472,7 +1460,7 @@ def body_uros_solo_ps4(slide):
     add_text_box(
         slide, right_x, y, half_w, cite_h,
         text="Worked example cross-domain (fotosinteza, ne OS) - Sweller & Cooper (1985):\n"
-             "studira se STRUKTURA pitanja, ne sadrzaj.",
+             "studira se STRUKTURA pitanja, ne sadržaj.",
         size=FS_CAPTION, italic=True, color=C_MUTED,
     )
 
@@ -1489,8 +1477,8 @@ def body_two_pass_ea(slide):
     add_bullet_list(
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, Inches(2.4),
         [
-            "LLM generise pitanje za EA nivo",
-            "Vraca tacan odgovor",
+            "LLM generiše pitanje za EA nivo",
+            "Vraca tačan odgovor",
             "Vraca source_line - doslovni navod iz PDF-a",
             "Veza pitanje <-> izvor je eksplicitna",
         ],
@@ -1506,8 +1494,8 @@ def body_two_pass_ea(slide):
     add_bullet_list(
         slide, CONTENT_X, y2 + Inches(0.5), half_w, CONTENT_H - (y2 - CONTENT_Y) - Inches(0.9),
         [
-            "Echo: ponovi pitanje i tacan odgovor",
-            "Generisi 3 tipizirana distraktora po SOLO nivou:",
+            "Echo: ponovi pitanje i tačan odgovor",
+            "Generiši 3 tipizirana distraktora po SOLO nivou:",
             ("EA: APPLIES_WRONG_PRINCIPLE  /  RIGHT_PRINCIPLE_WRONG_DOMAIN  /  OVER_GENERALIZATION", "sub"),
             "Strategije zasnovane na Sadler (1998) misconception theory",
         ],
@@ -1545,7 +1533,7 @@ def body_two_pass_ea(slide):
     add_text_box(
         slide, right_x + Inches(0.25), CONTENT_Y + Inches(1.05),
         rw - Inches(0.3), Inches(1.2),
-        text="Fokus: pedagoska valjanost pitanja i grounding u izvoru. Distraktori se NE traze u ovom prolazu.",
+        text="Fokus: pedagoška valjanost pitanja i grounding u izvoru. Distraktori se NE traže u ovom prolazu.",
         size=FS_BODY_SM, color=C_TEXT,
     )
 
@@ -1579,7 +1567,7 @@ def body_two_pass_ea(slide):
     add_text_box(
         slide, right_x + Inches(0.25), p2_y + Inches(1.05),
         rw - Inches(0.3), p2_h - Inches(1.1),
-        text="Echo prompt: LLM ponovi pitanje, pa generise distraktore po tipiziranim strategijama greske. Smanjuje 'lazne' distraktore.",
+        text="Echo prompt: LLM ponovi pitanje, pa generiše distraktore po tipiziranim strategijama greske. Smanjuje 'lažne' distraktore.",
         size=FS_BODY_SM, color=C_TEXT,
     )
 
@@ -1600,17 +1588,17 @@ def body_source_line(slide):
     add_bullet_list(
         slide, CONTENT_X, CONTENT_Y + Inches(0.62), half_w, CONTENT_H - Inches(0.7),
         [
-            ("Sta", "strong"),
+            ("Šta", "strong"),
             "Uz svako pitanje, LLM mora vratiti doslovni navod iz PDF-a",
-            "Navod opravdava tacan odgovor",
+            "Navod opravdava tačan odgovor",
             "",
-            ("Zasto", "strong"),
+            ("Zašto", "strong"),
             "Ako navod ne postoji u izvoru = signal halucinacije",
             "Recenzent vidi gde je 'istina' - sekundama, ne minutima",
             "",
             ("Limit", "strong"),
-            "Source_line hvata KRADJU citata - ne hvata pogresnu interpretaciju",
-            "Za to imamo CoVe (Chain-of-Verification) - vidi sledece slajdove",
+            "Source_line hvata KRAĐU citata - ne hvata pogrešnu interpretaciju",
+            "Za to imamo CoVe (Chain-of-Verification) - vidi sledeće slajdove",
         ],
         size=FS_BODY_SM,
     )
@@ -1633,7 +1621,7 @@ def body_source_line(slide):
         '  "distractors": [...],\n'
         '  "source_line": "Memorijska\\n'
         '   hijerarhija je organizovana tako\\n'
-        '   da brze memorije imaju manji\\n'
+        '   da brže memorije imaju manji\\n'
         '   kapacitet.",\n'
         '  "tags": { "ontology_anchor": {\\n'
         '     "source": "RAM",\\n'
@@ -1659,16 +1647,16 @@ def body_stefan_dekompozicija(slide):
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
         [
             ("Ulaz", "strong"),
-            "Prirodno-jezicka instrukcija praktickog zadatka",
+            "Prirodno-jezička instrukcija praktičkog zadatka",
             "Npr. \"Kreiraj C# konzolni projekat u Visual Studio-u\"",
             "",
             ("Izlaz", "strong"),
             "Snimljeni MP4 video tutorijal",
-            "OWL fajl izvrsnog plana (auditable)",
+            "OWL fajl izvršnog plana (auditable)",
             "",
             ("Hijerarhija razgradnje", "strong"),
             "Task: kompletan zadatak (zatvorena celina)",
-            "Step: atomicna akcija (otvori, klikni, otkucaj)",
+            "Step: atomična akcija (otvori, klikni, otkucaj)",
             "Action: tip akcije iz fiksne ontologije akcija",
         ],
         size=FS_BODY_SM,
@@ -1712,9 +1700,9 @@ def body_prompt_vs_finetune(slide):
     headers = ["", "Prompt engineering", "Fine-tuning"]
     rows = [
         ["Trosak razvoja",     "Nizak - samo prompt",                 "Visok - dataset + trening"],
-        ["Trosak izvrsenja",   "Veci prompt = veci token cost",       "Manji prompt, ali specijalizovan model"],
+        ["Trosak izvršenja",   "Veci prompt = veći token cost",       "Manji prompt, ali specijalizovan model"],
         ["Brzina iteracije",   "Sekunde - promenis prompt",           "Sati / dani - rerun trening"],
-        ["Domen-specificnost", "Ogranicena, oslanja se na bazni model","Visoka, prilagodjen domenu"],
+        ["Domen-specifičnost", "Ogranicena, oslanja se na bazni model","Visoka, prilagođen domenu"],
         ["Kontrola halucinacija","Posredna (CoT, schema, grounding)","Direktna (kvalitet treninga)"],
         ["Nas izbor",          "Da - PS4 + ontology grounding",       "Ne, za sada"],
     ]
@@ -1730,7 +1718,7 @@ def body_prompt_vs_finetune(slide):
     add_text_box(
         slide, CONTENT_X + Inches(0.25), y2 + Inches(0.1),
         CONTENT_W - Inches(0.4), Inches(0.4),
-        text="Zasto prompt engineering, ne fine-tune?", size=FS_BODY, bold=True,
+        text="Zašto prompt engineering, ne fine-tune?", size=FS_BODY, bold=True,
         color=C_PRIMARY,
     )
     add_text_box(
@@ -1744,7 +1732,7 @@ def body_prompt_vs_finetune(slide):
 def body_local_vs_cloud(slide):
     headers = ["", "Lokalni: Ollama Qwen 2.5 14B", "Cloud: Groq Llama 3.3 70B", "Cloud Vision: Qwen 2.5 VL 72B"]
     rows = [
-        ["Koristi se za", "Uros - SOLO pitanja", "Stefan - planiranje koraka", "Stefan - UI detekcija"],
+        ["Koristi se za", "Uroš - SOLO pitanja", "Stefan - planiranje koraka", "Stefan - UI detekcija"],
         ["Trosak po pozivu", "0 (lokalno)", "Mali (per token)", "Srednji (vision)"],
         ["Brzina", "Sporije, zavisi od GPU-a", "Vrlo brzo (Groq accel.)", "Brza"],
         ["Privatnost",  "Visoka (sve lokalno)", "Niska - cloud", "Niska - cloud"],
@@ -1759,7 +1747,7 @@ def body_local_vs_cloud(slide):
 def body_seg_a_kljucna(slide):
     add_text_box(
         slide, CONTENT_X, CONTENT_Y + Inches(0.4), CONTENT_W, Inches(0.4),
-        text="Kljucna poruka segmenta A",
+        text="Ključna poruka segmenta A",
         size=FS_SECTION_LABEL, bold=True, color=C_ACCENT,
         align=PP_ALIGN.CENTER,
     )
@@ -1777,9 +1765,9 @@ def body_seg_a_kljucna(slide):
     add_text_box(
         slide, box_x + Inches(0.4), box_y + Inches(0.5), box_w - Inches(0.8),
         Inches(1.6),
-        text=("Hijerarhijska dekompozicija + formalna pedagoska "
-              "taksonomija ugradjena u prompt transformisu LLM iz "
-              "generickog generatora teksta u pedagoski kalibrisan alat."),
+        text=("Hijerarhijska dekompozicija + formalna pedagoška "
+              "taksonomija ugrađena u prompt transformisu LLM iz "
+              "generickog generatora teksta u pedagoški kalibrisan alat."),
         size=22, italic=True, color=C_PRIMARY, align=PP_ALIGN.CENTER,
         anchor=MSO_ANCHOR.MIDDLE,
     )
@@ -1816,13 +1804,13 @@ def body_owl_uvod(slide):
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
         [
             "W3C standard za formalne ontologije",
-            "Definise klase, instance, relacije, ogranicenja",
-            "Citljiv mas i mas (RDF/XML, Turtle, OWL/XML)",
-            "Reasoning - moze da izvodi nove cinjenice",
+            "Definise klase, instance, relacije, ograničenja",
+            "Čitljiv mas i mas (RDF/XML, Turtle, OWL/XML)",
+            "Reasoning - može da izvodi nove činjenice",
             "",
             ("Mi koristimo", "strong"),
             "Stefan: OWL u Turtle (computer_use.ttl)",
-            "Uros: seed OWL + RDF/XML eksport za Protege",
+            "Uroš: seed OWL + RDF/XML eksport za Protege",
             "Luka: konceptualni model serijalizovan u JSON",
         ],
         size=FS_BODY_SM,
@@ -1844,7 +1832,7 @@ def body_owl_uvod(slide):
     )
     add_code_block(slide, right_x, CONTENT_Y + Inches(0.5), half_w,
                    CONTENT_H - Inches(0.6), code,
-                   caption="Mini-isecak iz computer_use.ttl (Stefan).")
+                   caption="Mini-isečak iz computer_use.ttl (Stefan).")
 
 
 def body_rdf_sparql(slide):
@@ -1859,7 +1847,7 @@ def body_rdf_sparql(slide):
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, Inches(2.5),
         [
             "Resource Description Framework",
-            "Sve cinjenice = (subject, predicate, object)",
+            "Sve činjenice = (subject, predicate, object)",
             "Primer: (RAM, is_faster_than, Disk)",
             "OWL je TBox, RDF je ABox - klase vs instance",
         ],
@@ -1896,7 +1884,7 @@ def body_rdf_sparql(slide):
     add_code_block(
         slide, right_x, CONTENT_Y + Inches(0.5), half_w,
         CONTENT_H - Inches(0.7), code_sparql,
-        caption="Stefanov upit za citanje koraka iz OWL plana.",
+        caption="Stefanov upit za čitanje koraka iz OWL plana.",
     )
 
 
@@ -1911,13 +1899,13 @@ def body_luka_json_primer(slide):
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
         [
             "Hijerarhijska, rekurzivna struktura",
-            "Svaki cvor ima id, name, bloom_level, children",
+            "Svaki čvor ima id, name, bloom_level, children",
             "Aktivnosti su listovi u stablu",
             "Lako se mapira u Protege / OWL graph",
             "",
-            ("Zasto JSON, a ne odmah OWL?", "strong"),
-            "Lakse za LLM da generise validan JSON",
-            "Lakse za UI prikaz i editovanje",
+            ("Zašto JSON, a ne odmah OWL?", "strong"),
+            "Lakše za LLM da generiše validan JSON",
+            "Lakše za UI prikaz i editovanje",
             "Mapiranje JSON -> OWL je determinizam, lako se radi unazad",
         ],
         size=FS_BODY_SM,
@@ -1965,9 +1953,9 @@ def body_uros_ontologija(slide):
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
         [
             ("Modeluje", "strong"),
-            "Relacije izmedju learning objekata (LO) jedne lekcije",
+            "Relacije između learning objekata (LO) jedne lekcije",
             "Edge = (source, target, type, description)",
-            "Cuva se u SQL tabeli i eksportuje u Turtle / OWL",
+            "Čuva se u SQL tabeli i eksportuje u Turtle / OWL",
             "",
             ("Multi-pass ekstrakcija", "strong"),
             "5 LLM prolaza, jedan po tipu relacije",
@@ -1991,7 +1979,7 @@ def body_uros_ontologija(slide):
         ("prerequisite",  "A se mora razumeti pre B"),
         ("example_of",    "A je primer pojma B"),
         ("depends_on",    "A operativno zavisi od B"),
-        ("similar_to",    "A i B dele kljucnu karakteristiku"),
+        ("similar_to",    "A i B dele ključnu karakteristiku"),
         ("part_of",       "A je deo strukture B"),
     ]
     gap = Inches(0.1)
@@ -2039,11 +2027,11 @@ def body_ontology_anchor(slide):
             ("Posledice", "strong"),
             "Pitanje je trasabilno - zna se na koju vezu se odnosi",
             "Dedup po (anchor, normalized_correct_answer) - egzaktno",
-            "Lakse za reviziju nastavnika",
+            "Lakše za reviziju nastavnika",
             "",
             ("Bez anchor-a", "strong"),
-            "Relacionalna pitanja 'klize' u genericke poredjenja",
-            "Anchor pretvara vagi nivo u specificnu ivicu grafa",
+            "Relacionalna pitanja 'klize' u genericke poređenja",
+            "Anchor pretvara vagi nivo u specifičnu ivicu grafa",
         ],
         size=FS_BODY_SM,
     )
@@ -2077,7 +2065,7 @@ def body_stefan_owl(slide):
         [
             ("Klase", "strong"),
             "Task - kompletan automatizacioni zadatak",
-            "Step - atomicna akcija u zadatku",
+            "Step - atomična akcija u zadatku",
             "Action - tip akcije iz fiksne liste",
             "UIElement, Application, ExecutionState",
             "",
@@ -2122,14 +2110,14 @@ def body_stefan_owl(slide):
 
 
 def body_validacija_pravila(slide):
-    headers = ["Pravilo", "Opis", "Zasto"]
+    headers = ["Pravilo", "Opis", "Zašto"]
     rows = [
         ["Action validation",
          "Samo akcije iz ontologije su dozvoljene",
-         "LLM ne moze izmisliti akciju koja ne moze biti izvrsena"],
+         "LLM ne može izmisliti akciju koja ne može biti izvrsena"],
         ["Sequence validation",
          "open_application mora prethoditi interakciji",
-         "Sprecava klikove na nepostojeci prozor"],
+         "Sprecava klikove na nepostojeći prozor"],
         ["Wait recommendation",
          "wait posle open_application",
          "UI se ucitava - bez pauze klikovi promasuju"],
@@ -2137,8 +2125,8 @@ def body_validacija_pravila(slide):
          "type_text zahteva value, key_press zahteva ime tipke",
          "Hvata strukturne greske LLM-a u JSON izlazu"],
         ["Target validation",
-         "click mora imati specifican target",
-         "Bez targeta nema sta da se klikne"],
+         "click mora imati specifičan target",
+         "Bez targeta nema šta da se klikne"],
     ]
     add_styled_table(slide, CONTENT_X, CONTENT_Y, CONTENT_W,
                      CONTENT_H - Inches(0.4), headers, rows,
@@ -2157,7 +2145,7 @@ def body_anatomija_halucinacije(slide):
     )
     add_text_box(
         slide, CONTENT_X, CONTENT_Y + Inches(0.4), half_w, Inches(0.3),
-        text="(LLM moze izmisliti cinjenicu)",
+        text="(LLM može izmisliti činjenicu)",
         size=FS_BODY_SM, italic=True, color=C_MUTED,
     )
 
@@ -2192,8 +2180,8 @@ def body_anatomija_halucinacije(slide):
     add_text_box(
         slide, inner_x + Inches(0.15), cur_y + Inches(0.4),
         inner_w - Inches(0.3), Inches(0.6),
-        text="Tacan podatak izgleda - ali je u PDF-u pisalo '1983 (DoD)'. "
-             "LLM se 'setio' opste cinjenice umesto da cita lekciju.",
+        text="Tačan podatak izgleda - ali je u PDF-u pisalo '1983 (DoD)'. "
+             "LLM se 'setio' opšte činjenice umesto da čita lekciju.",
         size=FS_BODY_SM, color=C_TEXT,
     )
 
@@ -2240,7 +2228,7 @@ def body_anatomija_halucinacije(slide):
     add_text_box(
         slide, inner_x + Inches(0.15), cur_y + Inches(0.4),
         inner_w - Inches(0.3), Inches(0.6),
-        text="Navod nadjen u PDF-u, sekcija 2.1, str. 14. Pitanje prolazi "
+        text="Navod nađen u PDF-u, sekcija 2.1, str. 14. Pitanje prolazi "
              "automatsku validaciju i ide u QuestionBank.",
         size=FS_BODY_SM, color=C_TEXT,
     )
@@ -2249,28 +2237,28 @@ def body_anatomija_halucinacije(slide):
     y_msg = CONTENT_Y + CONTENT_H - Inches(0.18)
     add_text_box(
         slide, CONTENT_X, y_msg, CONTENT_W, Inches(0.3),
-        text="Pal et al. (2023): bez RAG/grounding-a, GPT-4 ima 15-20% stopu halucinacije na faktickim pitanjima.",
+        text="Pal et al. (2023): bez RAG/grounding-a, GPT-4 ima 15-20% stopu halucinacije na faktičkim pitanjima.",
         size=FS_CAPTION, italic=True, color=C_MUTED, align=PP_ALIGN.CENTER,
     )
 
 
 def body_anti_halucinacije(slide):
     cols = [
-        ("Uros",
+        ("Uroš",
          "source_line citat",
          ["LLM mora vratiti doslovni navod iz PDF-a",
-          "Citat opravdava tacan odgovor",
+          "Citat opravdava tačan odgovor",
           "Ako navod ne postoji = signal halucinacije",
-          "Recenzent vidi gde je tacan odgovor 'usidren'"]),
+          "Recenzent vidi gde je tačan odgovor 'usidren'"]),
         ("Luka",
          "state-of-generation kontekst",
-         ["Vec generisane aktivnosti ubacuju se u prompt",
-          "LLM eksplicitno cita 'ne ponavljaj ovo'",
+         ["Već generisane aktivnosti ubacuju se u prompt",
+          "LLM eksplicitno čita 'ne ponavljaj ovo'",
           "Daje koherentnost kroz ceo kurs",
-          "Smanjuje genericne, ponavljajuce ishode"]),
+          "Smanjuje generičke, ponavljajuce ishode"]),
         ("Stefan",
          "SPARQL odbacuje nevalidne sekvence",
-         ["Pre izvrsavanja - ontoloska provera",
+         ["Pre izvršavanja - ontološka provera",
           "Pravila: open_app pre interakcije, wait posle open_app",
           "type_text zahteva value, ...",
           "Nevalidan plan = stop, ne pravi se video"]),
@@ -2304,7 +2292,7 @@ def body_anti_halucinacije(slide):
 def body_seg_b_kljucna(slide):
     add_text_box(
         slide, CONTENT_X, CONTENT_Y + Inches(0.4), CONTENT_W, Inches(0.4),
-        text="Kljucna poruka segmenta B",
+        text="Ključna poruka segmenta B",
         size=FS_SECTION_LABEL, bold=True, color=C_ACCENT,
         align=PP_ALIGN.CENTER,
     )
@@ -2319,9 +2307,9 @@ def body_seg_b_kljucna(slide):
     add_text_box(
         slide, box_x + Inches(0.4), box_y + Inches(0.4), box_w - Inches(0.8),
         box_h - Inches(0.8),
-        text=("Ontologija je ugovor izmedju LLM-a i sistema: ono sto LLM "
+        text=("Ontologija je ugovor između LLM-a i sistema: ono sto LLM "
               "proizvede mora se mapirati na klase i relacije. "
-              "To filtrira halucinacije i omogucava ponovnu upotrebu sadrzaja."),
+              "To filtrira halucinacije i omogućava ponovnu upotrebu sadržaja."),
         size=22, italic=True, color=C_PRIMARY, align=PP_ALIGN.CENTER,
         anchor=MSO_ANCHOR.MIDDLE,
     )
@@ -2370,7 +2358,7 @@ def body_validation_stack(slide):
           "Verbatim source_line citacija (lagani RAG - Lewis 2020)",
           "Two-pass orchestration za Extended Abstract (Bitew 2023)",
           "Self-consistency best-of-N (Wang 2022) za high-stakes generisanje"]),
-        ("3. DETECTION", "Posle LLM-a, pre coveka", C_PRIMARY,
+        ("3. DETECTION", "Posle LLM-a, pre čoveka", C_PRIMARY,
          ["Haladyna lint (11 pravila, 0-100 skor) + Embedding plausibility/diversity",
           "Chain-of-Verification (Dhuliawala 2023) - LLM proverava sebe",
           "Solvability test (LLM kao slep solver) + SOLO judge (Cohen's kappa)",
@@ -2420,22 +2408,22 @@ def body_haladyna_lint(slide):
     )
     add_text_box(
         slide, CONTENT_X, CONTENT_Y + Inches(0.32), half_w, Inches(0.25),
-        text="Validovano nad 27 udzbenika i 27 empirijskih studija.",
+        text="Validovano nad 27 udžbenika i 27 empirijskih studija.",
         size=FS_CAPTION, italic=True, color=C_MUTED,
     )
 
     # Levo - tabela glavnih H-pravila
     headers = ["Kod", "Pravilo"]
     rows = [
-        ["H14", "Stem se zavrsava pitanjem ili jasnim imperativom"],
+        ["H14", "Stem se završava pitanjem ili jasnim imperativom"],
         ["H16", "Stem ispod ~250 znakova, bez ukrasa"],
-        ["H17", "Izbeci negaciju (ili je istakni)"],
-        ["H19", "Tacno jedna tacna opcija"],
+        ["H17", "Izbeći negaciju (ili je istakni)"],
+        ["H19", "Tačno jedna tačna opcija"],
         ["H22", "Nijedne dve opcije nisu parafraze"],
-        ["H24", "Najduza opcija <= 2x najkraca (length clue)"],
+        ["H24", "Najduža opcija <= 2x najkraća (length clue)"],
         ["H25", "Nikad 'all/none of the above'"],
-        ["H27", "Tacna opcija NIJE najduza (give-away)"],
-        ["O7",  "Sve opcije gramaticki paralelne"],
+        ["H27", "Tačna opcija NIJE najduža (give-away)"],
+        ["O7",  "Sve opcije gramatički paralelne"],
     ]
     add_styled_table(
         slide, CONTENT_X, CONTENT_Y + Inches(0.65), half_w,
@@ -2454,11 +2442,11 @@ def body_haladyna_lint(slide):
     # 3 box-a sa strelicama nadole
     flow = [
         ("PROMPT (prevent)", "STEM_RULES + OPTION_RULES sekcije",
-         "LLM eksplicitno cita 11 numerisanih ogranicenja", C_PRIMARY),
+         "LLM eksplicitno čita 11 numerisanih ograničenja", C_PRIMARY),
         ("LLM CALL", "Ollama Qwen 2.5 14B",
-         "Generise JSON sa stem, correct, distractors, source_line", C_ACCENT),
+         "Generiše JSON sa stem, correct, distractors, source_line", C_ACCENT),
         ("LINT (detect)", "mcq_lint.py rule engine",
-         "Skenira izlaz, vraca H-flag-ove + 0-100 composite skor", C_PRIMARY),
+         "Skenira izlaz, vraća H-flag-ove + 0-100 composite skor", C_PRIMARY),
     ]
     n = len(flow)
     arrow_h = Inches(0.3)
@@ -2504,21 +2492,21 @@ def body_haladyna_lint(slide):
     add_text_box(
         slide, right_x, y_msg, half_w, Inches(0.4),
         text="Isti rule kod (H22) i u promptu i u lint-u - "
-             "lint flag se moze kvotirati nazad u prompt rule.",
+             "lint flag se može kvotirati nazad u prompt rule.",
         size=FS_CAPTION, italic=True, color=C_ACCENT, align=PP_ALIGN.CENTER,
     )
 
 
 def body_llm_kao_kriticar(slide):
-    """LLM kao samokriticar: CoVe + Solvability + SOLO judge + IOC."""
+    """LLM kao samokritičar: CoVe + Solvability + SOLO judge + IOC."""
     add_text_box(
         slide, CONTENT_X, CONTENT_Y, CONTENT_W, Inches(0.4),
-        text="LLM kao kriticar samog sebe - 4 tehnike",
+        text="LLM kao kritičar samog sebe - 4 tehnike",
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
     )
     add_text_box(
         slide, CONTENT_X, CONTENT_Y + Inches(0.4), CONTENT_W, Inches(0.3),
-        text="Drugi LLM (ili isti sa razlicitim promptom + temp=0.1) procenjuje izlaz prvog.",
+        text="Drugi LLM (ili isti sa različitim promptom + temp=0.1) procenjuje izlaz prvog.",
         size=FS_BODY_SM, italic=True, color=C_MUTED,
     )
 
@@ -2527,11 +2515,11 @@ def body_llm_kao_kriticar(slide):
          "Chain-of-Verification",
          "Dhuliawala et al. (2023)",
          [
-             "1. uzmi pitanje + tacan odgovor",
+             "1. uzmi pitanje + tačan odgovor",
              "2. planiraj 2-3 kratka verifikacijska pitanja",
              "3. odgovori NA SVAKO nezavisno (samo iz izvora)",
              "4. sudi: SUPPORTED / UNDERDETERMINED / CONTRADICTED",
-             "Hvata slucaj kad citat postoji, ali NE opravdava odgovor",
+             "Hvata slučaj kad citat postoji, ali NE opravdava odgovor",
          ]),
         ("Solvability",
          "LLM kao slep solver",
@@ -2539,9 +2527,9 @@ def body_llm_kao_kriticar(slide):
          [
              "Sakrij key, izmesaj redosled opcija, N=5 prolaza",
              "p ~ 1.0 -> trivijalno (ili length clue)",
-             "0.6-0.9 -> primerena tezina za LLM-class solver",
-             "p < 0.5 -> misframed / kljuc pogresan / out of source",
-             "Sinteticki analog klasicnog test-theory difficulty indeksa",
+             "0.6-0.9 -> primerena težina za LLM-class solver",
+             "p < 0.5 -> misframed / ključ pogrešan / out of source",
+             "Sintetički analog klasičnog test-theory difficulty indeksa",
          ]),
         ("SOLO judge",
          "Nezavisna klasifikacija + Cohen's kappa",
@@ -2551,13 +2539,13 @@ def body_llm_kao_kriticar(slide):
              "Bez znanja koji je nivo generator trazio",
              "kappa < 0.20 slight | 0.41-0.60 moderate",
              "0.61-0.80 substantial | 0.81+ almost perfect",
-             "A-priori provera 'da li pogodjeno SOLO' bez studenata",
+             "A-priori provera 'da li pogođeno SOLO' bez studenata",
          ]),
         ("IOC",
          "Item-Objective Congruence",
          "Rovinelli & Hambleton (1977)",
          [
-             "Za svaki item: ocena -1 / 0 / +1 vs ishod ucenja",
+             "Za svaki item: ocena -1 / 0 / +1 vs ishod učenja",
              "Da li ovo pitanje meri BAS ovaj ishod?",
              "IOC index = srednja vrednost, [-1, +1]",
              ">= 0.5 prihvatljivo, >= 0.75 jako",
@@ -2612,7 +2600,7 @@ def body_pilot_metodologija(slide):
     half_w = CONTENT_W / 2 - Inches(0.2)
     add_text_box(
         slide, CONTENT_X, CONTENT_Y, half_w, Inches(0.4),
-        text="Pilot evaluacija SOLO pitanja (Uros)",
+        text="Pilot evaluacija SOLO pitanja (Uroš)",
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
     )
     add_bullet_list(
@@ -2620,13 +2608,13 @@ def body_pilot_metodologija(slide):
         [
             ("Cilj evaluacije", "strong"),
             "Da li je kvalitet konstantan kroz SOLO nivoe?",
-            "Da li distraktori postaju lazni / slabi na visim nivoima?",
+            "Da li distraktori postaju lažni / slabi na višim nivoima?",
             "",
             ("Metodologija", "strong"),
-            "Vise PDF lekcija iz razlicitih domena",
-            "N pitanja po nivou, rucna anotacija",
-            "Sudije: clanovi tima + nezavisni recenzent",
-            "Metrike: valjanost, kvalitet distraktora, source-line tacnost",
+            "Više PDF lekcija iz različitih domena",
+            "N pitanja po nivou, ručna anotacija",
+            "Sudije: članovi tima + nezavisni recenzent",
+            "Metrike: valjanost, kvalitet distraktora, source-line tačnost",
             "",
             ("Format izlaza", "strong"),
             "Skor na skali 1-5 po dimenziji",
@@ -2688,15 +2676,15 @@ def body_kvalitet_po_nivou(slide):
     add_text_box(
         slide, CONTENT_X, chart_y + chart_h + Inches(0.1), half_w, Inches(0.5),
         text="Orijentaciono, N=80 anotiranih pitanja iz 4 lekcije OS-a "
-             "(2 clana tima + 1 nezavisni recenzent). Brojke se prosiruju u publikaciji.",
+             "(2 člana tima + 1 nezavisni recenzent). Brojke se prosiruju u publikaciji.",
         size=FS_CAPTION, italic=True, color=C_MUTED,
     )
 
-    # Desno - sta to znaci
+    # Desno - šta to znači
     right_x = CONTENT_X + half_w + Inches(0.4)
     add_text_box(
         slide, right_x, CONTENT_Y, half_w, Inches(0.4),
-        text="Sta vidimo u rezultatima",
+        text="Šta vidimo u rezultatima",
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
     )
     add_bullet_list(
@@ -2704,15 +2692,15 @@ def body_kvalitet_po_nivou(slide):
         [
             "Validnost odgovora pada sa porastom SOLO nivoa",
             "Distraktori postaju manje uverljivi",
-            "EA: cesto se 'distraktor' moze odbraniti kao tacan",
+            "EA: često se 'distraktor' može odbraniti kao tačan",
             "",
             ("Strukturna posledica - nije bug", "strong"),
-            "Lister et al. (2006): EA zadaci su strukturalno tesko",
-            "i za STUDENTE programiranja - nije iznenadjenje da i LLM",
-            "tu zaostaje. Razlog je isti: transfer izmedju konteksta.",
+            "Lister et al. (2006): EA zadaci su strukturalno teško",
+            "i za STUDENTE programiranja - nije iznenađenje da i LLM",
+            "tu zaostaje. Razlog je isti: transfer između konteksta.",
             "",
             ("Posledica za sistem", "strong"),
-            "Two-pass + typed distractors pomazu, ne resavaju potpuno",
+            "Two-pass + typed distractors pomazu, ne rešavaju potpuno",
             "Ontology anchor stabilizuje relacionalna pitanja",
             "Na EA nivou - obavezna recenzija nastavnika",
         ],
@@ -2729,13 +2717,13 @@ def body_primer_solo_pitanja(slide):
 
     levels = [
         ("Unistructural",
-         "Koja struktura procesa cuva PID?",
+         "Koja struktura procesa čuva PID?",
          "PCB - Process Control Block"),
         ("Multistructural",
-         "Koja tri stanja procesa najcesce prepoznajemo?",
+         "Koja tri stanja procesa najčešće prepoznajemo?",
          "Ready, Running, Blocked"),
         ("Relational",
-         "Kako kontekstno prebacivanje uticne na throughput sistema?",
+         "Kako kontekstno prebacivanje utiče na throughput sistema?",
          "Povecava overhead, smanjuje koristan rad CPU-a."),
         ("Extended Abstract",
          "Kako biste prilagodili scheduling algoritam za real-time sistem sa zagarantovanim deadline-om?",
@@ -2786,16 +2774,16 @@ def body_luka_bloom_pokrivenost(slide):
             ("Metrika", "strong"),
             "Da li su zastupljeni svi Bloomovi nivoi?",
             "Koliko aktivnosti po nivou?",
-            "Da li su ishodi mapirani na vise od jednog nivoa?",
+            "Da li su ishodi mapirani na više od jednog nivoa?",
             "",
             ("Pristup", "strong"),
-            "LLM eksplicitno trazi po svakom nivou",
-            "Sistem ne prelazi na sledeci nivo dok prethodni nije mapiran",
+            "LLM eksplicitno traži po svakom nivou",
+            "Sistem ne prelazi na sledeći nivo dok prethodni nije mapiran",
             "Dedup po (ishod, aktivnost_tip)",
             "",
             ("Nalaz", "strong"),
             "Najbolji rezultati: Pamtiti i Razumeti",
-            "Slabiji: Evaluirati i Kreirati - cesto se 'dotiknu' samo povrsno",
+            "Slabiji: Evaluirati i Kreirati - često se 'dotiknu' samo povrsno",
         ],
         size=FS_BODY_SM,
     )
@@ -2811,7 +2799,7 @@ def body_stefan_ui_robust(slide):
     half_w = CONTENT_W / 2 - Inches(0.2)
     add_text_box(
         slide, CONTENT_X, CONTENT_Y, half_w, Inches(0.4),
-        text="UI detekcija - sta sve moze da pukne",
+        text="UI detekcija - šta sve može da pukne",
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
     )
     add_bullet_list(
@@ -2820,16 +2808,16 @@ def body_stefan_ui_robust(slide):
             ("Vision model: Qwen 2.5 VL", "strong"),
             "Trazi UI element po opisu (lokacija + box)",
             "",
-            ("Ogranicenja", "strong"),
+            ("Ograničenja", "strong"),
             "Non-standard UI frameworks (custom controls)",
             "Brzo menjajuce interfejse (animacije, lazy load)",
             "Nizak kontrast / non-English labele",
             "Multi-monitor setup - samo primarni",
             "",
             ("Posledice", "strong"),
-            "Step fail - sistem zaustavlja izvrsenje",
-            "Video se zavrsava 'kratko' (do tacke prekida)",
-            "Logujemo gde je tacno puklo - olaksava debug",
+            "Step fail - sistem zaustavlja izvršenje",
+            "Video se završava 'kratko' (do tačke prekida)",
+            "Logujemo gde je tačno puklo - olaksava debug",
         ],
         size=FS_BODY_SM,
     )
@@ -2890,8 +2878,8 @@ def body_stefan_ui_robust(slide):
         text=("Anthropic Computer Use (10/2024): 14.9%   |   "
               "Claude 3.5 Sonnet (12/2024): ~22%   |   "
               "Najbolji open-source vision agent: ~12%.\n"
-              "Nas pristup nije autonomni agent vec eksplicitan plan - "
-              "izbegavamo open-ended trazenje sledeceg klika."),
+              "Nas pristup nije autonomni agent već eksplicitan plan - "
+              "izbegavamo open-ended traženje sledećeg klika."),
         size=FS_BODY_SM, color=C_TEXT,
     )
 
@@ -2900,13 +2888,13 @@ def body_pdf_coverage(slide):
     half_w = CONTENT_W / 2 - Inches(0.2)
     add_text_box(
         slide, CONTENT_X, CONTENT_Y, half_w, Inches(0.4),
-        text="PDF Coverage Tracking (Uros)",
+        text="PDF Coverage Tracking (Uroš)",
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
     )
     add_bullet_list(
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
         [
-            ("Sta meri", "strong"),
+            ("Šta meri", "strong"),
             "Koje su stranice PDF-a pokrivene pitanjima?",
             "Ponderisana pokrivenost po broju znakova",
             "Sustinska pokrivenost (izuzima skoro prazne stranice)",
@@ -2914,10 +2902,10 @@ def body_pdf_coverage(slide):
             ("Vizualno - heatmap", "strong"),
             "Bar po stranici, visina = broj znakova",
             "Boja = da li je stranica pokrivena pitanjima",
-            "Lista sustinskih stranica bez pitanja",
+            "Lista suštinskih stranica bez pitanja",
             "",
             ("Posledica", "strong"),
-            "Sistem ti sam kaze gde da generises jos pitanja",
+            "Sistem ti sam kaže gde da generises jos pitanja",
             "Heatmap je 'second pair of eyes' za nastavnika",
         ],
         size=FS_BODY_SM,
@@ -2940,15 +2928,15 @@ def body_granice_hitl(slide):
     add_bullet_list(
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
         [
-            "Definisanje ishoda - zahteva pedagosku procenu",
-            "Procena tezine pitanja u kontekstu grupe - dinamicki kontekst",
-            "Procena EA pitanja - cesto dvosmislena",
-            "Recenzija video tutorijala - da li je didakticki dobar",
-            "Konacno korigovanje halucinacija",
+            "Definisanje ishoda - zahteva pedagošku procenu",
+            "Procena težine pitanja u kontekstu grupe - dinamički kontekst",
+            "Procena EA pitanja - često dvosmislena",
+            "Recenzija video tutorijala - da li je didaktički dobar",
+            "Konačno korigovanje halucinacija",
             "",
-            ("Sve ovo radi - covek", "strong"),
+            ("Sve ovo radi - čovek", "strong"),
             "Sistem snima pripremu (do 80% rada)",
-            "Covek validira i fino podesava",
+            "Čovek validira i fino podešava",
         ],
         size=FS_BODY_SM,
     )
@@ -2961,10 +2949,10 @@ def body_granice_hitl(slide):
     )
 
     flow = [
-        ("Sistem generise",   "Struktura, pitanja, video"),
+        ("Sistem generiše",   "Struktura, pitanja, video"),
         ("Nastavnik pregleda","source_line + ontology anchor + coverage"),
-        ("Nastavnik koriguje","Edituje pitanja, rasporedjuje aktivnosti"),
-        ("Sistem belezi",     "Promene u DB - feedback za buduce generisanje"),
+        ("Nastavnik koriguje","Edituje pitanja, raspoređuje aktivnosti"),
+        ("Sistem belezi",     "Promene u DB - feedback za buduće generisanje"),
     ]
     gap = Inches(0.12)
     n = len(flow)
@@ -2993,7 +2981,7 @@ def body_granice_hitl(slide):
 def body_seg_c_kljucna(slide):
     add_text_box(
         slide, CONTENT_X, CONTENT_Y + Inches(0.4), CONTENT_W, Inches(0.4),
-        text="Kljucna poruka segmenta C",
+        text="Ključna poruka segmenta C",
         size=FS_SECTION_LABEL, bold=True, color=C_ACCENT,
         align=PP_ALIGN.CENTER,
     )
@@ -3008,8 +2996,8 @@ def body_seg_c_kljucna(slide):
     add_text_box(
         slide, box_x + Inches(0.4), box_y + Inches(0.4), box_w - Inches(0.8),
         box_h - Inches(0.8),
-        text=("Kvalitet automatski generisanog sadrzaja opada sa porastom "
-              "kognitivne slozenosti - to nije bug, vec strukturna posledica, "
+        text=("Kvalitet automatski generisanog sadržaja opada sa porastom "
+              "kognitivne složenosti - to nije bug, već strukturna posledica, "
               "i upravo zato je human-in-the-loop obavezan."),
         size=22, italic=True, color=C_PRIMARY, align=PP_ALIGN.CENTER,
         anchor=MSO_ANCHOR.MIDDLE,
@@ -3029,14 +3017,14 @@ def body_sinteza_arhitektura(slide):
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
         [
             ("Sloj 1 - Course Planner (Luka)", "strong"),
-            "Strukturu kursa generise iz ishoda + PDF-a",
+            "Strukturu kursa generiše iz ishoda + PDF-a",
             "Izlaz: JSON / OWL hijerarhija aktivnosti",
             "",
-            ("Sloj 2 - Knowledge Layer (Uros)", "strong"),
+            ("Sloj 2 - Knowledge Layer (Uroš)", "strong"),
             "ConceptRelationship ontologija iz lekcija",
             "Source-of-truth za relacije pojmova",
             "",
-            ("Sloj 3 - Assessment (Uros)", "strong"),
+            ("Sloj 3 - Assessment (Uroš)", "strong"),
             "SOLO pitanja, ankored na knowledge layer",
             "",
             ("Sloj 4 - Demonstration (Stefan)", "strong"),
@@ -3051,9 +3039,9 @@ def body_sinteza_arhitektura(slide):
     layers = [
         ("1. Course Planner", "Luka",
          "Ulaz: ishodi + PDF", C_PRIMARY),
-        ("2. Knowledge Layer", "Uros",
+        ("2. Knowledge Layer", "Uroš",
          "ConceptRelationship ontologija", C_PRIMARY),
-        ("3. Assessment + Demonstration", "Uros + Stefan",
+        ("3. Assessment + Demonstration", "Uroš + Stefan",
          "SOLO pitanja  |  OWL-validiran video", C_ACCENT),
         ("4. Human-in-the-loop", "Nastavnik",
          "Recenzija, korekcija, feedback", C_PRIMARY),
@@ -3114,10 +3102,10 @@ def body_tok_podataka(slide):
          "Moduli -> koncepti -> ishodi -> aktivnosti (Bloom-aware)"),
         ("Knowledge Layer ekstrahuje ontologiju",
          "Multi-pass LLM ekstrakcija ConceptRelationship-ova"),
-        ("Assessment generise SOLO pitanja",
+        ("Assessment generiše SOLO pitanja",
          "Anchor iz Knowledge Layer-a, PS4 prompt, source_line"),
-        ("Demonstration generise video za prakticnu aktivnost",
-         "NL instrukcija -> OWL plan -> validacija -> izvrsenje + snimanje"),
+        ("Demonstration generiše video za praktičnu aktivnost",
+         "NL instrukcija -> OWL plan -> validacija -> izvršenje + snimanje"),
         ("Nastavnik pregleda i koriguje",
          "Coverage heatmap, source_line provera, video review"),
     ]
@@ -3153,14 +3141,14 @@ def body_tok_podataka(slide):
 def body_veze_drugim_temama(slide):
     cols = [
         ("Deep Reinforcement Learning",
-         "Adaptivno biranje pitanja i puta ucenja",
+         "Adaptivno biranje pitanja i puta učenja",
          ["State: profil studenta + istorija odgovora",
           "Action: izbor narednog pitanja / aktivnosti",
           "Reward: napredak na SOLO / Bloomovoj skali",
           "Veza sa temom DRL for ITS sa liste predmeta"]),
         ("Recommender Systems",
-         "Personalizacija puteva ucenja",
-         ["Sadrzaj-based: ontology anchor sluzi kao feature",
+         "Personalizacija puteva učenja",
+         ["Sadržaj-based: ontology anchor sluzi kao feature",
           "Collaborative: studenti sa slicnim odgovorima",
           "Hibridno: koristi obe signala",
           "Veza sa temom Recommenders for ITS"]),
@@ -3193,15 +3181,15 @@ def body_veze_drugim_temama(slide):
 def body_otvorena_pitanja(slide):
     pitanja = [
         ("Kvalitet distraktora na EA nivou",
-         "Kako podici uverljivost bez gubitka SOLO 'tipa' greske?"),
+         "Kako podići uverljivost bez gubitka SOLO 'tipa' greske?"),
         ("Real-world evaluacija",
-         "Sistem nije jos testiran u stvarnoj ucionici - to je sledeci korak."),
+         "Sistem nije jos testiran u stvarnoj učionici - to je sledeći korak."),
         ("Multimodalna procena znanja",
-         "Kako uracunati ne samo tekstualne odgovore vec i prakticne demonstracije?"),
+         "Kako uracunati ne samo tekstualne odgovore već i praktične demonstracije?"),
         ("Stabilnost vision modela",
          "Custom UI ostaju izazov; integracija sa accessibility API-jima?"),
-        ("Skaliranje na vise predmeta",
-         "Da li se ontologija prenosi izmedju domena ili je svaki predmet svoja TBox?"),
+        ("Skaliranje na više predmeta",
+         "Da li se ontologija prenosi između domena ili je svaki predmet svoja TBox?"),
     ]
     add_text_box(
         slide, CONTENT_X, CONTENT_Y, CONTENT_W, Inches(0.4),
@@ -3234,13 +3222,13 @@ def body_otvorena_pitanja(slide):
 
 
 def body_etika_ai_act(slide):
-    """Etika, privatnost, EU AI Act - kako nas dizajn vec adresira high-risk zahteve."""
+    """Etika, privatnost, EU AI Act - kako nas dizajn već adresira high-risk zahteve."""
     cards = [
         ("Privatnost",
-         "Lokalni LLM (Ollama) nije slucajan izbor",
+         "Lokalni LLM (Ollama) nije slučajan izbor",
          [
-             "PDF nastavnog materijala cesto sadrzi IP fakulteta",
-             "Studentski podaci ne napustaju masinu",
+             "PDF nastavnog materijala često sadrzi IP fakulteta",
+             "Studentski podaci ne napuštaju mašinu",
              "Zero per-call cost - skalabilno za institucije",
          ],
          C_PRIMARY),
@@ -3249,7 +3237,7 @@ def body_etika_ai_act(slide):
          [
              "Svako pitanje ima izvorni navod iz materijala",
              "Svaka relacija ima tipiziranu vezu u ontologiji",
-             "Recenzent moze da prati 'zasto' iza svake odluke",
+             "Recenzent može da prati 'zašto' iza svake odluke",
          ],
          C_ACCENT),
         ("EU AI Act (2024/2025)",
@@ -3257,7 +3245,7 @@ def body_etika_ai_act(slide):
          [
              "Striktna transparentnost: dokumentovati izvore i logiku",
              "Obavezan ljudski oversight (human-in-the-loop)",
-             "Audit trail - ono sto nas dizajn vec ima 'iz kutije'",
+             "Audit trail - ono sto nas dizajn već ima 'iz kutije'",
          ],
          C_PRIMARY),
     ]
@@ -3292,7 +3280,7 @@ def body_etika_ai_act(slide):
             points, size=FS_BODY_SM,
         )
 
-    # Donji red - sazeta poruka
+    # Donji red - sažeta poruka
     y2 = CONTENT_Y + CONTENT_H - Inches(0.4)
     add_text_box(
         slide, CONTENT_X, y2, CONTENT_W, Inches(0.35),
@@ -3313,12 +3301,12 @@ def body_buduci_rad(slide):
         slide, CONTENT_X, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
         [
             "Spojiti tri repozitorijuma u jedan monorepo",
-            "Definisati API kontrakte izmedju slojeva",
-            "Zajednicka ontoloska osnova (deljena seed_ontology)",
+            "Definisati API kontrakte između slojeva",
+            "Zajednička ontološka osnova (deljena seed_ontology)",
             "Demo end-to-end pipe za jedan predmet",
             "",
             ("Konferencija Sinteza 2026", "strong"),
-            "Jedan rad iz tima vec publikovan",
+            "Jedan rad iz tima već publikovan",
             "Cilj: drugi rad o integraciji",
         ],
         size=FS_BODY_SM,
@@ -3327,21 +3315,21 @@ def body_buduci_rad(slide):
     right_x = CONTENT_X + half_w + Inches(0.4)
     add_text_box(
         slide, right_x, CONTENT_Y, half_w, Inches(0.4),
-        text="Naredni koraci - duzi rok",
+        text="Naredni koraci - duži rok",
         size=FS_SUBTITLE, bold=True, color=C_PRIMARY,
     )
     add_bullet_list(
         slide, right_x, CONTENT_Y + Inches(0.5), half_w, CONTENT_H - Inches(0.6),
         [
-            "Pilot u stvarnoj ucionici",
+            "Pilot u stvarnoj učionici",
             "Adaptivno biranje pitanja (DRL prototip)",
-            "Personalizacija puta ucenja (Recommender)",
+            "Personalizacija puta učenja (Recommender)",
             "Multimodalna procena znanja (audio / kod / video)",
-            "Skaliranje na vise predmeta",
+            "Skaliranje na više predmeta",
             "",
             ("Etika i privatnost", "strong"),
             "Lokalni LLM kao osnovna opcija",
-            "Pravo nastavnika na konacnu rec",
+            "Pravo nastavnika na konačnu reč",
         ],
         size=FS_BODY_SM,
     )
@@ -3350,15 +3338,15 @@ def body_buduci_rad(slide):
 def body_zakljucak(slide):
     add_text_box(
         slide, CONTENT_X, CONTENT_Y + Inches(0.2), CONTENT_W, Inches(0.4),
-        text="Sta smo pokazali", size=FS_SECTION_LABEL, bold=True,
+        text="Šta smo pokazali", size=FS_SECTION_LABEL, bold=True,
         color=C_ACCENT, align=PP_ALIGN.CENTER,
     )
 
     points = [
         ("LLM sam nije dovoljan", "halucinacije + nedostatak strukture"),
-        ("Pedagoska taksonomija kalibrise", "Bloom + SOLO kao kompas"),
+        ("Pedagoška taksonomija kalibrise", "Bloom + SOLO kao kompas"),
         ("Ontologija filtrira", "OWL/SPARQL + source_line + ontology anchor"),
-        ("Human-in-the-loop ostaje obavezan", "narocito na visim SOLO nivoima"),
+        ("Human-in-the-loop ostaje obavezan", "naročito na višim SOLO nivoima"),
     ]
     gap = Inches(0.18)
     n = len(points)
@@ -3424,7 +3412,7 @@ def build_presentation(out_path):
     slide_specs.append(("content", dict(
         page_label=None,
         title="Predmet i kontekst",
-        subtitle="Napredne tehnike racunarske inteligencije",
+        subtitle="Napredne tehnike računarske inteligencije",
         body_func=body_predmet_context,
     )))
     slide_specs.append(("content", dict(
@@ -3438,24 +3426,24 @@ def build_presentation(out_path):
     slide_specs.append(("divider", dict(
         segment_label="Segment 0",
         title="Uvod i motivacija",
-        subtitle="Polazimo od trenutnog stanja - sta nastavnik radi i zasto je to skupo.",
+        subtitle="Polazimo od trenutnog stanja - šta nastavnik radi i zašto je to skupo.",
         time_str="10 min  /  4 slajda",
     )))
     slide_specs.append(("content", dict(
         page_label="Segment 0 - Uvod",
-        title="Problem - sta nastavnik radi rucno",
+        title="Problem - šta nastavnik radi ručno",
         subtitle="Vreme i kognitivni napor su jaka skala bola.",
         body_func=body_problem_stats,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment 0 - Uvod",
         title="LLM otvara vrata, ali ne sam",
-        subtitle="Sta dobijemo - i sta sve uneso skripa.",
+        subtitle="Šta dobijemo - i šta sve uneso skripa.",
         body_func=body_llm_kao_odgovor,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment 0 - Zasto sad",
-        title="Zasto bas sad? - tri empirijska signala",
+        page_label="Segment 0 - Zašto sad",
+        title="Zašto bas sad? - tri empirijska signala",
         subtitle="Od Bloomovog '2 Sigma' problema do mainstream LLM tutora.",
         body_func=body_why_now,
     )))
@@ -3468,26 +3456,26 @@ def build_presentation(out_path):
     slide_specs.append(("content", dict(
         page_label="Segment 0 - Vizija",
         title="Vizija - ITS pipeline od ishoda do video tutorijala",
-        subtitle="5 koraka, end-to-end, bez rucne intervencije izmedju.",
+        subtitle="5 koraka, end-to-end, bez rucne intervencije između.",
         body_func=body_vizija_pipeline,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment 0 - Komponente",
         title="Tri komponente jednog pipeline-a",
-        subtitle="Svaki clan tima radi jedan deo - zajedno cine celinu.",
+        subtitle="Svaki član tima radi jedan deo - zajedno čine celinu.",
         body_func=body_tri_komponente,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment 0 - Kljucna poruka",
-        title="Kljucna poruka prezentacije",
+        page_label="Segment 0 - Ključna poruka",
+        title="Ključna poruka prezentacije",
         body_func=body_kljucna_poruka_uvod,
     )))
 
     # ============ SEGMENT A - LLM PROMPTING ============
     slide_specs.append(("divider", dict(
         segment_label="Segment A",
-        title="LLM prompting i pedagoske taksonomije",
-        subtitle="Hijerarhijska dekompozicija + formalna taksonomija u promptu = pedagoski kalibrisan LLM.",
+        title="LLM prompting i pedagoške taksonomije",
+        subtitle="Hijerarhijska dekompozicija + formalna taksonomija u promptu = pedagoški kalibrisan LLM.",
         time_str="25 min  /  11 slajdova",
     )))
     slide_specs.append(("content", dict(
@@ -3498,19 +3486,19 @@ def build_presentation(out_path):
     )))
     slide_specs.append(("content", dict(
         page_label="Segment A - SOLO",
-        title="SOLO taksonomija - strukturalna slozenost odgovora",
-        subtitle="Od jedne cinjenice do generalizacije i transfera znanja.",
+        title="SOLO taksonomija - strukturalna složenost odgovora",
+        subtitle="Od jedne činjenice do generalizacije i transfera znanja.",
         body_func=body_solo_pregled,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment A - Poredjenje",
-        title="Bloom vs SOLO - razliciti pogledi, komplementarni",
+        page_label="Segment A - Poređenje",
+        title="Bloom vs SOLO - različiti pogledi, komplementarni",
         body_func=body_bloom_vs_solo,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment A - Luka",
         title="Luka - hijerarhijska struktura kursa",
-        subtitle="LLM razlaze kurs u stablo modula, koncepata, ishoda i aktivnosti.",
+        subtitle="LLM razlaže kurs u stablo modula, koncepata, ishoda i aktivnosti.",
         body_func=body_luka_struktura,
     )))
     slide_specs.append(("content", dict(
@@ -3519,25 +3507,25 @@ def build_presentation(out_path):
         body_func=body_luka_prompt_template,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment A - Uros",
-        title="Uros - SOLO Quiz Generator i PS4 prompt template",
+        page_label="Segment A - Uroš",
+        title="Uroš - SOLO Quiz Generator i PS4 prompt template",
         body_func=body_uros_solo_ps4,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment A - Uros",
+        page_label="Segment A - Uroš",
         title="Two-pass generisanje za Extended Abstract",
-        subtitle="Razdvajamo 'sta pitati' od 'kako napraviti dobre distraktore'.",
+        subtitle="Razdvajamo 'šta pitati' od 'kako napraviti dobre distraktore'.",
         body_func=body_two_pass_ea,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment A - Uros",
+        page_label="Segment A - Uroš",
         title="Source-line citation - anti-halucinacija",
         body_func=body_source_line,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment A - Stefan",
         title="Stefan - hijerarhijska dekompozicija zadataka",
-        subtitle="Task -> Step -> Action: tri nivoa razgradnje prirodno-jezicke instrukcije.",
+        subtitle="Task -> Step -> Action: tri nivoa razgradnje prirodno-jezičke instrukcije.",
         body_func=body_stefan_dekompozicija,
     )))
     slide_specs.append(("content", dict(
@@ -3551,8 +3539,8 @@ def build_presentation(out_path):
         body_func=body_local_vs_cloud,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment A - Kljucna poruka",
-        title="Kljucna poruka segmenta A",
+        page_label="Segment A - Ključna poruka",
+        title="Ključna poruka segmenta A",
         body_func=body_seg_a_kljucna,
     )))
 
@@ -3560,55 +3548,55 @@ def build_presentation(out_path):
     slide_specs.append(("divider", dict(
         segment_label="Segment B",
         title="Ontologije i formalni grounding",
-        subtitle="Ontologija je ugovor izmedju LLM-a i sistema - sve sto LLM proizvede mora se mapirati.",
+        subtitle="Ontologija je ugovor između LLM-a i sistema - sve sto LLM proizvede mora se mapirati.",
         time_str="25 min  /  10 slajdova",
     )))
     slide_specs.append(("content", dict(
         page_label="Segment B - Osnove",
         title="OWL - Web Ontology Language",
-        subtitle="Klase, instance, relacije, ogranicenja, mas i mas serijalizacija.",
+        subtitle="Klase, instance, relacije, ograničenja, mas i mas serijalizacija.",
         body_func=body_owl_uvod,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment B - Osnove",
         title="RDF i SPARQL - tripleti i upiti",
-        subtitle="Sve cinjenice su tripleti; sve upite pisemo nad gradom triplet-a.",
+        subtitle="Sve činjenice su tripleti; sve upite pišemo nad gradom triplet-a.",
         body_func=body_rdf_sparql,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment B - Luka",
         title="Luka - JSON serijalizacija strukture kursa",
-        subtitle="LLM lakse generise validan JSON nego direktan OWL - JSON -> OWL je determinizam.",
+        subtitle="LLM lakše generiše validan JSON nego direktan OWL - JSON -> OWL je determinizam.",
         body_func=body_luka_json_primer,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment B - Uros",
-        title="Uros - ConceptRelationship ontologija",
-        subtitle="Relacije izmedju learning objekata - osnova za relacionalna i EA pitanja.",
+        page_label="Segment B - Uroš",
+        title="Uroš - ConceptRelationship ontologija",
+        subtitle="Relacije između learning objekata - osnova za relacionalna i EA pitanja.",
         body_func=body_uros_ontologija,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment B - Uros",
-        title="Uros - SPARQL upit za 'ontology anchor'",
+        page_label="Segment B - Uroš",
+        title="Uroš - SPARQL upit za 'ontology anchor'",
         subtitle="Pitanje se ne pravi 'iz vazduha' - bira se konkretna veza i ona postaje kontekst.",
         body_func=body_ontology_anchor,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment B - Stefan",
-        title="Stefan - OWL ontologija izvrsnog plana",
-        subtitle="Plan koji LLM generise mora se mapirati na klase Task / Step / Action.",
+        title="Stefan - OWL ontologija izvršnog plana",
+        subtitle="Plan koji LLM generiše mora se mapirati na klase Task / Step / Action.",
         body_func=body_stefan_owl,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment B - Stefan",
         title="Stefan - pravila validacije plana (SPARQL)",
-        subtitle="Pre nego sto se ista izvrsi, SPARQL upiti proveravaju strukturna pravila.",
+        subtitle="Pre nego sto se ista izvrši, SPARQL upiti proveravaju strukturna pravila.",
         body_func=body_validacija_pravila,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment B - Anti-halucinacija",
         title="Anti-halucinacioni mehanizmi - 3 ugla",
-        subtitle="Svaki clan tima pokriva drugaciju vrstu greske LLM-a.",
+        subtitle="Svaki član tima pokriva drugačiju vrstu greske LLM-a.",
         body_func=body_anti_halucinacije,
     )))
     slide_specs.append(("content", dict(
@@ -3618,34 +3606,34 @@ def build_presentation(out_path):
         body_func=body_anatomija_halucinacije,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment B - Kljucna poruka",
-        title="Kljucna poruka segmenta B",
+        page_label="Segment B - Ključna poruka",
+        title="Ključna poruka segmenta B",
         body_func=body_seg_b_kljucna,
     )))
 
     # ============ SEGMENT C - EVALUACIJA ============
     slide_specs.append(("divider", dict(
         segment_label="Segment C",
-        title="Evaluacija, kvalitet i ogranicenja",
-        subtitle="Kvalitet opada sa kognitivnom slozenoscu - to opravdava human-in-the-loop.",
+        title="Evaluacija, kvalitet i ograničenja",
+        subtitle="Kvalitet opada sa kognitivnom složenošću - to opravdava human-in-the-loop.",
         time_str="25 min  /  9 slajdova",
     )))
     slide_specs.append(("content", dict(
         page_label="Segment C - A-priori validacija",
         title="Pre nego sto student vidi pitanje - 3 sloja provere",
-        subtitle="Cela 'baterija' tehnika iz literature: prevent + generate + detect, sve pre coveka.",
+        subtitle="Cela 'baterija' tehnika iz literature: prevent + generate + detect, sve pre čoveka.",
         body_func=body_validation_stack,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment C - Haladyna",
         title="Haladyna item-writing pravila - prevent + detect hybrid",
-        subtitle="Ista pravila u promptu i u lint-u - lint flag se moze kvotirati nazad u prompt rule.",
+        subtitle="Ista pravila u promptu i u lint-u - lint flag se može kvotirati nazad u prompt rule.",
         body_func=body_haladyna_lint,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment C - LLM-as-judge",
-        title="LLM kao kriticar samog sebe - CoVe, Solvability, SOLO judge, IOC",
-        subtitle="Posle generisanja, pre coveka: drugi LLM (ili isti sa drugacijim promptom) procenjuje izlaz.",
+        title="LLM kao kritičar samog sebe - CoVe, Solvability, SOLO judge, IOC",
+        subtitle="Posle generisanja, pre čoveka: drugi LLM (ili isti sa drugacijim promptom) procenjuje izlaz.",
         body_func=body_llm_kao_kriticar,
     )))
     slide_specs.append(("content", dict(
@@ -3668,38 +3656,38 @@ def build_presentation(out_path):
     slide_specs.append(("content", dict(
         page_label="Segment C - Luka",
         title="Luka - Bloomova pokrivenost generisanih kurseva",
-        subtitle="Vidimo gde sistem dobro pokriva nivoe, a gde tek 'dotice' visa misljenja.",
+        subtitle="Vidimo gde sistem dobro pokriva nivoe, a gde tek 'dotiče' viša mišljenja.",
         body_func=body_luka_bloom_pokrivenost,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment C - Stefan",
-        title="Stefan - robustnost izvrsenja video tutorijala",
-        subtitle="Vision modeli su odlicni, ali ne savrseni - non-standard UI je glavna bolna tacka.",
+        title="Stefan - robustnost izvršenja video tutorijala",
+        subtitle="Vision modeli su odlični, ali ne savršeni - non-standard UI je glavna bolna tačka.",
         body_func=body_stefan_ui_robust,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment C - Uros",
+        page_label="Segment C - Uroš",
         title="PDF Coverage Tracking - heatmap pokrivenosti",
-        subtitle="Sistem sam ti kaze gde da generises jos pitanja.",
+        subtitle="Sistem sam ti kaže gde da generises jos pitanja.",
         body_func=body_pdf_coverage,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment C - HITL",
         title="Granice automatizacije i human-in-the-loop",
-        subtitle="Sistem snima 80% rada; covek validira i fino podesava.",
+        subtitle="Sistem snima 80% rada; čovek validira i fino podešava.",
         body_func=body_granice_hitl,
     )))
     slide_specs.append(("content", dict(
-        page_label="Segment C - Kljucna poruka",
-        title="Kljucna poruka segmenta C",
+        page_label="Segment C - Ključna poruka",
+        title="Ključna poruka segmenta C",
         body_func=body_seg_c_kljucna,
     )))
 
     # ============ SEGMENT D - SINTEZA ============
     slide_specs.append(("divider", dict(
         segment_label="Segment D",
-        title="Sinteza, buduci rad, zakljucak",
-        subtitle="Kako tri komponente postaju jedan sistem - i sta sledi.",
+        title="Sinteza, budući rad, zaključak",
+        subtitle="Kako tri komponente postaju jedan sistem - i šta sledi.",
         time_str="10-15 min  /  7 slajdova",
     )))
     slide_specs.append(("content", dict(
@@ -3717,7 +3705,7 @@ def build_presentation(out_path):
     slide_specs.append(("content", dict(
         page_label="Segment D - Veze",
         title="Veze sa drugim temama predmeta",
-        subtitle="DRL i Recommender Systems prirodno produzavaju ovaj pipeline.",
+        subtitle="DRL i Recommender Systems prirodno produžavaju ovaj pipeline.",
         body_func=body_veze_drugim_temama,
     )))
     slide_specs.append(("content", dict(
@@ -3728,26 +3716,26 @@ def build_presentation(out_path):
     slide_specs.append(("content", dict(
         page_label="Segment D - Etika",
         title="Etika, privatnost i EU AI Act",
-        subtitle="Obrazovni AI je high-risk po EU AI Act-u - nas dizajn vec adresira kljucne zahteve.",
+        subtitle="Obrazovni AI je high-risk po EU AI Act-u - nas dizajn već adresira kljucne zahteve.",
         body_func=body_etika_ai_act,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment D - Buduci rad",
-        title="Naredni koraci - kratki i duzi rok",
+        title="Naredni koraci - kratki i duži rok",
         body_func=body_buduci_rad,
     )))
     slide_specs.append(("content", dict(
         page_label="Segment D - Zakljucak",
         title="Zakljucak",
-        subtitle="Vracamo se na pocetnu poruku.",
+        subtitle="Vracamo se na početnu poruku.",
         body_func=body_zakljucak,
     )))
     slide_specs.append(("quote", dict(
-        page_label="Zakljucna misao",
-        quote=("LLM + ontologija + pedagoska taksonomija = "
-               "pouzdano, pedagoski kalibrisano ITS okruzenje koje je "
-               "vise od zbira svojih delova."),
-        attribution="kljucna poruka prezentacije",
+        page_label="Zaključna misao",
+        quote=("LLM + ontologija + pedagoška taksonomija = "
+               "pouzdano, pedagoški kalibrisano ITS okruženje koje je "
+               "više od zbira svojih delova."),
+        attribution="ključna poruka prezentacije",
     )))
 
     # ---- Hvala ----
@@ -3755,7 +3743,7 @@ def build_presentation(out_path):
 
     # ---- Literatura ----
     literatura_1 = [
-        ("Pedagoske taksonomije", [
+        ("Pedagoške taksonomije", [
             "Bloom, B.S. (1984). The 2 Sigma Problem. Educational Researcher, 13(6), 4-16.",
             "Biggs, J.B. & Collis, K.F. (1982). Evaluating the Quality of Learning: The SOLO Taxonomy. Academic Press.",
             "Anderson, L.W. & Krathwohl, D.R. (2001). A Taxonomy for Learning, Teaching, and Assessing. Longman.",
@@ -3820,7 +3808,7 @@ def build_presentation(out_path):
     slide_specs.append(("references", dict(
         page_label="Literatura - 1 / 4",
         title="Literatura",
-        subtitle="Pedagoske taksonomije i LLM u obrazovanju",
+        subtitle="Pedagoške taksonomije i LLM u obrazovanju",
         refs=literatura_1,
     )))
     slide_specs.append(("references", dict(
@@ -3849,11 +3837,11 @@ def build_presentation(out_path):
         if kind == "title":
             make_title_slide(
                 prs,
-                title=("Od ishoda ucenja do automatizovanog ITS-a"),
+                title=("Od ishoda učenja do automatizovanog ITS-a"),
                 subtitle=("LLM-driven pipeline za generisanje strukture kursa, "
                           "video demonstracija i pitanja zasnovanih na SOLO taksonomiji"),
-                team="Uros Petraskovic - Luka Saric - Stefan Lazarevic",
-                course="Napredne tehnike racunarske inteligencije - Master, FTN UNS",
+                team="Uroš Petrašković - Luka Šarić - Stefan Lazarević",
+                course="Napredne tehnike računarske inteligencije - Master, FTN UNS",
                 date_str="2026.",
             )
         elif kind == "divider":
@@ -3865,7 +3853,7 @@ def build_presentation(out_path):
         elif kind == "thanks":
             make_thank_you_slide(
                 prs,
-                team="Uros Petraskovic - Luka Saric - Stefan Lazarevic",
+                team="Uroš Petrašković - Luka Šarić - Stefan Lazarević",
             )
         elif kind == "references":
             slide = new_slide(prs)
